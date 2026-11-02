@@ -6,7 +6,13 @@ The user authorized a real Islamic Relief IATI demonstration published by nujli.
 
 **Why:** The user said “NO I mean using public data for now”; open-data reuse is not organization approval.
 
-**How to apply:** Retain the exact visible disclosure: “Independent demonstration built from Islamic Relief's public IATI data. Not reviewed or endorsed by Islamic Relief.” Attribute “Data: Islamic Relief Worldwide via IATI Registry” with a link. Keep the demonstration distinguishable so an approved organization page can replace it later.
+**How to apply:** Retain the exact visible disclosure: “Independent demonstration built from Islamic Relief's public reporting. Not reviewed or endorsed by Islamic Relief.” Attribute “Data: Islamic Relief Worldwide via IATI Registry” with a link. Keep the demonstration distinguishable so an approved organization page can replace it later.
+
+The first public Islamic Relief demonstration must be a Palestine example, not Myanmar. Retain the Myanmar evidence privately, never delete it to make the replacement.
+
+**Why:** The user explicitly corrected the geographic choice: “we need a palestine islamic relief example not Myanmar”.
+
+**How to apply:** For multi-country activities, expose only explicitly Gaza-attributable records on a Gaza-focused page; never prorate joint budgets or receipts using recipient-country percentages.
 
 Financial records are not humanitarian outcome counts. Preserve transaction dates separately from value dates, do not sum incoming funds, disbursements, expenditure and budgets, and flag source inconsistencies rather than silently correcting them.
 

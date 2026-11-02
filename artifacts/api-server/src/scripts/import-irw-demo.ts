@@ -62,6 +62,8 @@ async function main() {
     const errors = publicationErrors(project);
     if (errors.length) throw new Error(errors.join(" "));
     await lock.query("BEGIN");
+    await lock.query("UPDATE projects SET status='draft',published_at=NULL,approved_at=NULL,updated_at=now() WHERE organization_id=$1 AND demonstration->>'activityId'='GB-CHC-328158-MYA25-2'", [orgId]);
+    await lock.query("INSERT INTO audit_events(actor_id,action,resource_id,details) SELECT $1,'demonstration.archived',id::text,$2 FROM projects WHERE organization_id=$3 AND demonstration->>'activityId'='GB-CHC-328158-MYA25-2'", [owner, JSON.stringify({reason:"Replaced with Palestine demonstration; original evidence retained privately."}), orgId]);
     // An explicitly labeled publisher demonstration is distinct from customer approval.
     await lock.query("UPDATE projects SET status='published',published_at=now(),approved_at=NULL,updated_at=now() WHERE id=$1 AND organization_id=$2 AND demonstration IS NOT NULL", [projectId, orgId]);
     await lock.query("INSERT INTO audit_events(actor_id,action,resource_id,details) VALUES($1,$2,$3,$4)", [owner, "demonstration.published", projectId, JSON.stringify({ activityId: ACTIVITY_ID, registryUrl: IATI_REGISTRY, organizationApproval: false, aiIdentityCheck: true })]);
