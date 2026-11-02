@@ -241,6 +241,16 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
             {project.demonstration && <span className="meta self-center" data-testid="text-source-updated">Source updated {fmtDate(project.demonstration.sourceUpdatedAt)}</span>}
             <span className="inline-flex items-center gap-1">Original source: <SourceLink url={project.sourceUrl} dark /></span>
           </div>
+          <nav aria-label="Jump to" className="mt-4 flex flex-wrap gap-2 text-sm">
+            <a href="#story" className="inline-flex min-h-11 items-center rounded-sm border border-paper/40 px-3 underline underline-offset-4" data-testid="link-jump-figures">{project.statistics.length} reported figures</a>
+            {!evidenceOnly && <a href="#viewer" className="inline-flex min-h-11 items-center rounded-sm border border-paper/40 px-3 underline underline-offset-4" data-testid="link-jump-media">Explore media</a>}
+            <a href="#timeline" className="inline-flex min-h-11 items-center rounded-sm border border-paper/40 px-3 underline underline-offset-4" data-testid="link-jump-updates">{project.updates.length} dated updates</a>
+            <a href="#evidence" onClick={() => setEvidenceOpen(true)} className="inline-flex min-h-11 items-center rounded-sm border border-paper/40 px-3 underline underline-offset-4" data-testid="link-jump-evidence">Open evidence and sources</a>
+          </nav>
+          {(since || reportedSince) && <div role="status" className="mt-3 rounded-sm border border-paper/40 p-3 text-sm" data-testid="notice-active-date-filter">
+            <p>A date filter is active. Earlier records and records without a publication date may be hidden; they have not been removed.</p>
+            <button type="button" onClick={() => { setSince(''); setReportedSince(''); }} className="min-h-11 font-semibold underline underline-offset-4" data-testid="button-show-all-project-content">Show all project content</button>
+          </div>}
           <DemoNotice demonstration={project.demonstration} />
           <details className="group mt-1 text-sm text-paper/85" data-testid="details-project-info">
             <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 font-medium underline underline-offset-4">More record details<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden /></summary>
@@ -250,11 +260,6 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
               <p className="meta">Updated {fmtDate(project.updatedAt)}</p>
             </div>
           </details>
-          <nav aria-label="Jump to" className="mt-2 flex flex-wrap gap-x-4 text-sm">
-            {!evidenceOnly && <a href="#viewer" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-media">Media</a>}
-            <a href="#evidence" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-evidence">Evidence</a>
-            <a href="#timeline" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-updates">Updates</a>
-          </nav>
         </div>
       </header>
 
