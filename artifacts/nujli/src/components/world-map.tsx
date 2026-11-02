@@ -6,6 +6,15 @@ import type { ParticleField } from '@/lib/geo';
 
 export interface MapMarker { id: string; lat: number; lng: number; label: string }
 interface View { k: number; tx: number; ty: number }
+/** Size-independent camera: centre in degrees plus zoom factor. */
+export interface MapCamera { lat: number; lng: number; k: number }
+export function isValidCamera(c: unknown): c is MapCamera {
+  if (!c || typeof c !== 'object') return false;
+  const { lat, lng, k } = c as Record<string, unknown>;
+  return typeof lat === 'number' && typeof lng === 'number' && typeof k === 'number'
+    && Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(k)
+    && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && k >= 1 && k <= 60;
+}
 
 function useReducedMotion() {
   const [r, setR] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -21,7 +30,9 @@ export { useReducedMotion };
 
 export function WorldMap({
   markers = [], selectedId, onSelect, interactive = true, className, focusId, label = 'World map of published projects', wheelZoom = true, drift = false,
+  initialView, onViewChange, focusNonce = 0, dimUnselected = false,
 }: {
+  initialView?: MapCamera | null; onViewChange?: (c: MapCamera) => void; focusNonce?: number; dimUnselected?: boolean;
   markers?: MapMarker[]; selectedId?: string | null; onSelect?: (id: string) => void; interactive?: boolean;
   className?: string; focusId?: string | null; label?: string; wheelZoom?: boolean; drift?: boolean;
 }) {
@@ -76,8 +87,28 @@ export function WorldMap({
   useEffect(() => {
     if (!size.w || inited.current) return;
     inited.current = true;
-    setView(regionView());
+    if (initialView && isValidCamera(initialView)) {
+      const b = baseRef.current; const [x, y] = project(initialView.lat, initialView.lng);
+      const k = initialView.k;
+      setDrifting(false);
+      setView({ k, tx: size.w / 2 - (x * b.s + b.ox) * k, ty: size.h / 2 - (y * b.s + b.oy) * k });
+    } else setView(regionView());
+    // initialView is only read once on first layout
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size, regionView]);
+
+  const onViewRef = useRef(onViewChange);
+  onViewRef.current = onViewChange;
+  useEffect(() => {
+    if (!inited.current || !size.w || !onViewRef.current) return;
+    const t = window.setTimeout(() => {
+      const lng = ((size.w / 2 - view.tx) / view.k - base.ox) / base.s / MAP_W * 360 - 180;
+      const lat = 90 - ((size.h / 2 - view.ty) / view.k - base.oy) / base.s / MAP_H * 180;
+      const c = { lat: Math.max(-90, Math.min(90, lat)), lng: Math.max(-180, Math.min(180, lng)), k: view.k };
+      if (isValidCamera(c)) onViewRef.current?.(c);
+    }, 300);
+    return () => window.clearTimeout(t);
+  }, [view, size, base]);
 
   // gentle drift until first interaction
   const active = drifting && !reduced && size.w > 0;
@@ -179,12 +210,25 @@ export function WorldMap({
     const m = markers.find((x) => x.id === focusId);
     if (!m) return;
     const [x, y] = project(m.lat, m.lng);
-    setView((v) => {
-      const k = Math.max(v.k, 6);
-      const bx = x * base.s + base.ox; const by = y * base.s + base.oy;
-      return { k, tx: size.w / 2 - bx * k, ty: size.h / 2 - by * k };
-    });
-  }, [focusId, markers, base, size]);
+    const from = viewRef.current;
+    const k = Math.max(from.k, 9);
+    const bx = x * base.s + base.ox; const by = y * base.s + base.oy;
+    const to = { k, tx: size.w / 2 - bx * k, ty: size.h / 2 - by * k };
+    if (reduced) { setView(to); return; }
+    // controlled approach: interpolate centre in map space + zoom geometrically
+    const cx0 = (size.w / 2 - from.tx) / from.k; const cy0 = (size.h / 2 - from.ty) / from.k;
+    let raf = 0; const t0 = performance.now(); const dur = 900;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / dur); const e = 1 - Math.pow(1 - t, 3);
+      const kk = from.k * Math.pow(k / from.k, e);
+      const cx = cx0 + (bx - cx0) * e; const cy = cy0 + (by - cy0) * e;
+      setView({ k: kk, tx: size.w / 2 - cx * kk, ty: size.h / 2 - cy * kk });
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusId, focusNonce, base, size, reduced]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (!interactive) return;
@@ -264,6 +308,7 @@ export function WorldMap({
         const [sx, sy] = toScreen(x, y, view);
         if (sx < -20 || sy < -20 || sx > size.w + 20 || sy > size.h + 20) return null;
         const on = m.id === selectedId;
+        const dim = dimUnselected && !!selectedId && !on;
         return (
           <button
             key={m.id}
@@ -271,11 +316,12 @@ export function WorldMap({
             onClick={() => onSelect?.(m.id)}
             aria-label={`Project: ${m.label}`}
             aria-pressed={on}
+            title={m.label}
             data-testid={`marker-project-${m.id}`}
-            className="group absolute -translate-x-1/2 -translate-y-1/2 grid place-items-center h-11 w-11 rounded-full focus-visible:outline-2"
+            className={cn('group absolute -translate-x-1/2 -translate-y-1/2 grid place-items-center h-11 w-11 rounded-full focus-visible:outline-2 transition-opacity duration-500', dim && 'opacity-30 hover:opacity-90 focus-visible:opacity-100', on && 'z-10')}
             style={{ left: sx, top: sy }}
           >
-            {!reduced && <span className="absolute h-3 w-3 rounded-full bg-vermilion/50 pulse-ring" aria-hidden />}
+            {!reduced && !dim && <span className="absolute h-3 w-3 rounded-full bg-vermilion/50 pulse-ring" aria-hidden />}
             <svg viewBox="-10 -10 20 20" aria-hidden className={cn('relative star-mark transition-transform', on ? 'h-6 w-6 scale-110' : 'h-4 w-4 group-hover:scale-150')}>
               <rect x="-6" y="-6" width="12" height="12" fill="#D42A2F" stroke={on ? '#F3ECDD' : 'none'} strokeWidth="1.2" />
               <rect x="-6" y="-6" width="12" height="12" fill="#D42A2F" stroke={on ? '#F3ECDD' : 'none'} strokeWidth="1.2" transform="rotate(45)" />
@@ -292,10 +338,10 @@ export function WorldMap({
       )}
       {interactive && (
         <div className="absolute bottom-3 right-3 z-10 flex flex-col overflow-hidden rounded-sm border border-paper/20 bg-ink/80 backdrop-blur">
-          <button type="button" aria-label="Zoom in" data-testid="button-zoom-in" onClick={() => { stopDrift(); zoomAt(1.4, size.w / 2, size.h / 2); }} className="grid h-9 w-9 place-items-center text-paper hover:bg-paper/10"><Plus className="h-4 w-4" /></button>
-          <button type="button" aria-label="Zoom out" data-testid="button-zoom-out" onClick={() => { stopDrift(); zoomAt(1 / 1.4, size.w / 2, size.h / 2); }} className="grid h-9 w-9 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><Minus className="h-4 w-4" /></button>
-          <button type="button" aria-label="Center on region" title="Center on region" data-testid="button-zoom-region" onClick={() => { stopDrift(); setView(regionView()); }} className="grid h-9 w-9 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><LocateFixed className="h-4 w-4" /></button>
-          <button type="button" aria-label="Show full world" title="Show full world" data-testid="button-zoom-reset" onClick={() => { stopDrift(); setView({ k: 1, tx: 0, ty: 0 }); }} className="grid h-9 w-9 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><Globe2 className="h-4 w-4" /></button>
+          <button type="button" aria-label="Zoom in" data-testid="button-zoom-in" onClick={() => { stopDrift(); zoomAt(1.4, size.w / 2, size.h / 2); }} className="grid h-11 w-11 place-items-center text-paper hover:bg-paper/10"><Plus className="h-4 w-4" /></button>
+          <button type="button" aria-label="Zoom out" data-testid="button-zoom-out" onClick={() => { stopDrift(); zoomAt(1 / 1.4, size.w / 2, size.h / 2); }} className="grid h-11 w-11 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><Minus className="h-4 w-4" /></button>
+          <button type="button" aria-label="Center on region" title="Center on region" data-testid="button-zoom-region" onClick={() => { stopDrift(); setView(regionView()); }} className="grid h-11 w-11 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><LocateFixed className="h-4 w-4" /></button>
+          <button type="button" aria-label="Show full world" title="Show full world" data-testid="button-zoom-reset" onClick={() => { stopDrift(); setView({ k: 1, tx: 0, ty: 0 }); }} className="grid h-11 w-11 place-items-center text-paper hover:bg-paper/10 border-t border-paper/15"><Globe2 className="h-4 w-4" /></button>
         </div>
       )}
     </div>

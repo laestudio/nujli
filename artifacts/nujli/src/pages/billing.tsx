@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpRight, BadgeCheck, Ban, RefreshCw } from 'lucide-react';
 import { useCreateCheckout, useGetBillingPackage, useVerifyMembership, useSetDeveloperAccess, getGetMeQueryKey } from '@workspace/api-client-react';
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { WhopProduct } from '@/components/whop-product';
 
 export default function Billing() {
+  const [, navigate] = useLocation();
   const qc = useQueryClient();
   const me = useMe();
   const pkg = useGetBillingPackage();
@@ -29,6 +30,22 @@ export default function Billing() {
       <section className="mx-auto max-w-5xl px-5 py-14 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div className="min-w-0">
           <Journey current="Pay" className="mb-8" />
+          {me.data?.developerEligible && <div className="mb-6 rounded-md border border-vermilion p-4" data-testid="developer-skip-panel">
+            <p className="text-sm font-medium">Temporary developer demo</p>
+            <p className="mt-1 text-sm text-ink/75">Skip payment and try Generate → Review → Publish. No charge, no verified purchase.</p>
+            <button type="button" className="mt-3 inline-flex min-h-11 items-center rounded-sm bg-vermilion px-5 font-semibold text-white disabled:opacity-50"
+              data-testid="button-skip-payment" disabled={developer.isPending}
+              onClick={() => {
+                if (!me.data?.organizationId) { navigate('/organization'); return; }
+                developer.mutate({data:{enabled:true}}, {onSuccess: access => {
+                  if (access.active && access.status === 'developer') navigate('/organization/new');
+                }});
+              }}>
+              {developer.isPending ? 'Opening developer demo…' : 'Skip payment — developer demo'}
+            </button>
+            {developer.isError && <div className="mt-3"><ErrorState error={developer.error} title="Could not open developer demo." /></div>}
+            {developer.isSuccess && !developer.data.active && <p role="alert" className="mt-3 text-sm">{developer.data.message}</p>}
+          </div>}
           <Kicker className="text-ink/55">Billing</Kicker>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight">Membership</h1>
           <p className="mt-3 text-ink/70 max-w-md">View the official Whop product below. Access is granted only after the server confirms your membership.</p>
