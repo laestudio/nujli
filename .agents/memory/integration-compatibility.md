@@ -20,6 +20,12 @@ Do not assume integration reference examples match the installed Whop SDK: the i
 
 **How to apply:** Verify provider request contracts and explicit API versions before changing billing code. Fail closed on unknown membership data.
 
+Use the installed OpenAI SDK's Zod-compatible structured-output helper for extraction; do not assume the installed Zod exposes `z.toJSONSchema`.
+
+**Why:** This workspace's Zod version lacked that method. Plain JSON-mode extraction also produced schema failures despite readable source content; structured outputs completed a real job successfully.
+
+**How to apply:** Validate schema conversion against installed dependencies, enforce the extraction schema at the provider, retain independent source-quotation checks, and log field paths rather than source text when validation fails.
+
 Orval can generate colliding path-parameter and query-parameter type names for an operation combining both. Inspect generated exports rather than repeatedly changing barrels; codegen rewrites barrels.
 
 **Why:** Barrel edits were overwritten by codegen, leaving the collision.
