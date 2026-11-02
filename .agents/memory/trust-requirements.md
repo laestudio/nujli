@@ -16,6 +16,12 @@ The owner may use an explicitly granted developer-access button to access organi
 
 **How to apply:** Require the signed-in, server-authorized development account, visibly label developer status, leave ordinary users' Whop gates intact, disable this privilege in production, and do not extend independent-review permissions.
 
+Developer testing may have a larger, still bounded generation allowance than ordinary paid accounts.
+
+**Why:** Repeated generation failures consumed the owner's normal allowance and prevented testing the repaired workflow.
+
+**How to apply:** Derive the allowance from server-verified developer entitlement, not a request flag. Preserve duplicate-job prevention and normal production limits.
+
 Do not add the “Just browsing” donor shortcut to the landing page.
 
 **Why:** The user explicitly requested its removal; their immediate need was access to the organization side.

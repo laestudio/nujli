@@ -48,6 +48,7 @@ export async function entitlement(organizationId?: string) {
 export async function requirePaid(orgId: string) {
   const access = await entitlement(orgId);
   if (!access.active) throw new HttpError(access.status === "blocked" ? 503 : 402, access.message);
+  return access;
 }
 export async function checkout(orgId: string, origin: string) {
   requireCondition(process.env.WHOP_WEBHOOK_SECRET, 503, "Verified payment webhooks are not configured. Checkout is disabled.");

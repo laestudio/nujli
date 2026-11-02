@@ -36,8 +36,11 @@ Only facts explicitly supported by text. Claims and update bodies are EXACT quot
   const data = extraction.parse(JSON.parse(choice.message.content));
   return {...data,cause:data.cause??"",locationName:data.locationName??""};
 }
+export function generationHourlyLimit(access: {active:boolean;status:string}) {
+  return access.active && access.status === "developer" ? 30 : 5;
+}
 export async function enqueueGeneration(id: string, orgId: string) {
-  await requirePaid(orgId);
+  const access = await requirePaid(orgId);
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -48,7 +51,10 @@ export async function enqueueGeneration(id: string, orgId: string) {
     const existing = await client.query("SELECT * FROM generation_jobs WHERE project_id=$1 AND status IN ('queued','fetching','generating','building','preparing') LIMIT 1", [id]);
     if (existing.rows[0]) { await client.query("COMMIT"); return serializeJob(existing.rows[0]); }
     const recent = await client.query("SELECT count(*)::int AS n FROM generation_jobs WHERE organization_id=$1 AND created_at>now()-interval '1 hour'", [orgId]);
-    requireCondition(recent.rows[0].n < 5,429,"Generation limit reached. Try again in one hour.");
+    const limit = generationHourlyLimit(access);
+    requireCondition(recent.rows[0].n < limit,429,access.status === "developer"
+      ? "The developer testing allowance of 30 generation attempts per hour has been reached. Try again after earlier attempts leave the hourly window."
+      : "Generation limit reached. Try again in one hour.");
     const created = await client.query("INSERT INTO generation_jobs(project_id,organization_id) VALUES($1,$2) RETURNING *", [id,orgId]);
     await client.query("COMMIT"); return serializeJob(created.rows[0]);
   } catch(e) { await client.query("ROLLBACK"); throw e; } finally { client.release(); }
