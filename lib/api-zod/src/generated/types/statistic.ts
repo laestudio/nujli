@@ -7,6 +7,8 @@
  */
 
 export interface Statistic {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   label: string;
   value: string;

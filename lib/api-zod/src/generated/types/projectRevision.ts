@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { Claim } from './claim';
+import type { Immersion } from './immersion';
 import type { Media } from './media';
 import type { ProjectUpdate } from './projectUpdate';
 import type { Statistic } from './statistic';
@@ -39,4 +40,5 @@ export interface ProjectRevision {
   media: Media[];
   /** @maxItems 100 */
   claims: Claim[];
+  immersion?: Immersion;
 }

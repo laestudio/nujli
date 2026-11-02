@@ -328,6 +328,7 @@ components:
       type: object
       required: [id, text, sourceUrl, quote, label, reviews]
       properties:
+        publishedAt: {type: [string, "null"], readOnly: true}
         id: {type: string}
         text: {type: string, maxLength: 2000}
         sourceUrl: {type: string}
@@ -338,6 +339,7 @@ components:
       type: object
       required: [id, label, value, unit, claimId, sourceUrl, quote, asOf]
       properties:
+        publishedAt: {type: [string, "null"], readOnly: true}
         id: {type: string}
         label: {type: string}
         value: {type: string}
@@ -350,6 +352,7 @@ components:
       type: object
       required: [id, title, date, body, sourceUrl, quote]
       properties:
+        publishedAt: {type: [string, "null"], readOnly: true}
         id: {type: string}
         title: {type: string}
         date: {type: string}
@@ -360,6 +363,7 @@ components:
       type: object
       required: [id, url, type, caption, permissionStatus, sourceUrl]
       properties:
+        publishedAt: {type: [string, "null"], readOnly: true}
         id: {type: string}
         url: {type: string}
         type: {type: string, enum: [image, video]}
@@ -392,6 +396,40 @@ components:
             projectId: {type: string}
             projectTitle: {type: string}
             organizationName: {type: string}
+    ImmersiveHotspot:
+      type: object
+      required: [id, kind, recordId, x, y, confirmed, limitations]
+      properties:
+        id: {type: string, maxLength: 100}
+        kind: {type: string, enum: [claim, media]}
+        recordId: {type: string}
+        x: {type: number, minimum: 0, maximum: 100}
+        y: {type: number, minimum: 0, maximum: 100}
+        confirmed: {type: boolean}
+        limitations: {type: string, minLength: 10, maxLength: 2000}
+    ImmersiveScene:
+      type: object
+      required: [mediaId, panoramaConfirmed, date, dateQuote, hotspots]
+      properties:
+        mediaId: {type: string}
+        panoramaConfirmed: {type: boolean}
+        date: {type: [string, "null"]}
+        dateQuote: {type: string, maxLength: 4000}
+        hotspots: {type: array, maxItems: 40, items: {$ref: "#/components/schemas/ImmersiveHotspot"}}
+    EvidenceComparison:
+      type: object
+      required: [beforeMediaId, afterMediaId, claimId, confirmed]
+      properties:
+        beforeMediaId: {type: string}
+        afterMediaId: {type: string}
+        claimId: {type: string}
+        confirmed: {type: boolean}
+    Immersion:
+      type: object
+      required: [scenes, comparisons]
+      properties:
+        scenes: {type: array, maxItems: 50, items: {$ref: "#/components/schemas/ImmersiveScene"}}
+        comparisons: {type: array, maxItems: 20, items: {$ref: "#/components/schemas/EvidenceComparison"}}
     ProjectRevision:
       type: object
       required: [title, overview, cause, locationName, latitude, longitude, statistics, updates, media, claims]
@@ -406,6 +444,7 @@ components:
         updates: {type: array, maxItems: 100, items: {$ref: "#/components/schemas/ProjectUpdate"}}
         media: {type: array, maxItems: 50, items: {$ref: "#/components/schemas/Media"}}
         claims: {type: array, maxItems: 100, items: {$ref: "#/components/schemas/Claim"}}
+        immersion: {$ref: "#/components/schemas/Immersion"}
     Project:
       allOf:
         - {$ref: "#/components/schemas/ProjectRevision"}

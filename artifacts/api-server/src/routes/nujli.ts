@@ -8,6 +8,7 @@ import { billingPackage, checkout, entitlement, requirePaid } from "../lib/billi
 import { enqueueGeneration, serializeJob } from "../lib/generation";
 import { requireCondition } from "../lib/errors";
 import { z } from "zod";
+import { recordPublication } from "../lib/publication-dates";
 
 const router=Router();
 const idOf=(raw:unknown)=>z.string().uuid().parse(raw);
@@ -116,7 +117,11 @@ for(const action of ["approve","publish","unpublish"] as const){
         await client.query("UPDATE projects SET status='approved',approved_at=now(),published_at=NULL,updated_at=now() WHERE id=$1",[id]);
       }else if(action==="publish"){
         requireCondition(rows[0].status==="approved"&&rows[0].approved_at,409,"Approve the current draft before publishing.");
-        await client.query("UPDATE projects SET status='published',published_at=now(),updated_at=now() WHERE id=$1",[id]);
+        const project = await getProject(id,{organizationId:who.organization.id});
+        const publishedAt = new Date().toISOString();
+        const ledger = recordPublication(project, rows[0].evidence_publications ?? {}, publishedAt);
+        await client.query("UPDATE projects SET status='published',published_at=$2,evidence_publications=$3,updated_at=now() WHERE id=$1",
+          [id,publishedAt,JSON.stringify(ledger)]);
       }else await client.query("UPDATE projects SET status='draft',approved_at=NULL,published_at=NULL,updated_at=now() WHERE id=$1",[id]);
       await audit(client,who.userId,`project.${action}`,id);await client.query("COMMIT");
     }catch(e){await client.query("ROLLBACK");throw e;}finally{client.release();}

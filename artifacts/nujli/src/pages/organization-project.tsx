@@ -14,6 +14,7 @@ import {
 import { Page } from '@/components/shell';
 import { AiBanner, EntitlementBanner, OrgGate } from '@/components/org-gate';
 import { ProjectView } from '@/components/project-view';
+import { ImmersionEditor, immersionProblems, pruneImmersion, revokeClaim, revokeMedia } from '@/components/immersion-editor';
 import { ACTIVE_GEN, GEN_STEPS, Journey, genLabel } from '@/components/journey';
 import { ClaimLabelBadge, Empty, ErrorState, Kicker, PageSkeleton, StatusPill } from '@/components/states';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +28,10 @@ function toRevision(p: Project): ProjectRevision {
     title: p.title, overview: p.overview, cause: p.cause, locationName: p.locationName, latitude: p.latitude, longitude: p.longitude,
     statistics: p.statistics.map((s) => ({ ...s })), updates: p.updates.map((u) => ({ ...u })),
     media: p.media.map((m) => ({ ...m })), claims: p.claims.map((c) => ({ ...c, reviews: [...c.reviews] })),
+    immersion: p.immersion ? {
+      scenes: p.immersion.scenes.map((s) => ({ ...s, hotspots: s.hotspots.map((h) => ({ ...h })) })),
+      comparisons: p.immersion.comparisons.map((c) => ({ ...c })),
+    } : undefined,
   };
 }
 
@@ -41,6 +46,7 @@ function problems(r: ProjectRevision): string[] {
   r.claims.forEach((c, i) => { if (!c.text.trim() || !c.sourceUrl.trim() || !c.quote.trim()) out.push(`Claim ${i + 1} needs text, a source URL and a quote.`); });
   r.media.forEach((m, i) => { if (!m.url.trim() || !m.sourceUrl.trim()) out.push(`Media ${i + 1} needs a file URL and a source URL.`); });
   if ((r.latitude === null) !== (r.longitude === null)) out.push('Provide both latitude and longitude, or neither.');
+  out.push(...immersionProblems(r));
   return out;
 }
 
@@ -211,9 +217,15 @@ function Editor({ me, id }: { me: Account; id: string }) {
   const r = rev ?? toRevision(project);
   const set = (patch: Partial<ProjectRevision>) => { setRev({ ...r, ...patch }); setDirty(true); };
   const upd = <T extends { id: string }>(key: 'statistics' | 'updates' | 'media' | 'claims', itemId: string, patch: Partial<T>) =>
-    set({ [key]: (r[key] as unknown as T[]).map((x) => (x.id === itemId ? { ...x, ...patch } : x)) } as Partial<ProjectRevision>);
-  const rm = (key: 'statistics' | 'updates' | 'media' | 'claims', itemId: string) =>
-    set({ [key]: (r[key] as { id: string }[]).filter((x) => x.id !== itemId) } as Partial<ProjectRevision>);
+    set({
+      [key]: (r[key] as unknown as T[]).map((x) => (x.id === itemId ? { ...x, ...patch } : x)),
+      ...(key === 'media' ? { immersion: revokeMedia(r.immersion, itemId) } : key === 'claims' ? { immersion: revokeClaim(r.immersion, itemId) } : {}),
+    } as Partial<ProjectRevision>);
+  const rm = (key: 'statistics' | 'updates' | 'media' | 'claims', itemId: string) => {
+    const media = key === 'media' ? r.media.filter((x) => x.id !== itemId) : r.media;
+    const claims = key === 'claims' ? r.claims.filter((x) => x.id !== itemId) : r.claims;
+    set({ [key]: (r[key] as { id: string }[]).filter((x) => x.id !== itemId), immersion: pruneImmersion(r.immersion, new Set(media.map((m) => m.id)), new Set(claims.map((c) => c.id))) } as Partial<ProjectRevision>);
+  };
   const issues = problems(r);
   const doSave = () => save.mutate({ id, data: r });
   const previewProject: Project = { ...project, ...r };
@@ -398,6 +410,8 @@ function Editor({ me, id }: { me: Account; id: string }) {
               </ItemCard>
             ))}
           </ArraySection>
+
+          <ImmersionEditor r={r} set={set} />
         </form>
             </>
           )}

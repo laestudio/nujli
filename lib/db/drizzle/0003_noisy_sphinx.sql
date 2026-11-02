@@ -1,0 +1,2 @@
+ALTER TABLE "projects" ADD COLUMN "immersion" jsonb DEFAULT '{"scenes":[],"comparisons":[]}'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "projects" ADD COLUMN "evidence_publications" jsonb DEFAULT '{}'::jsonb NOT NULL;

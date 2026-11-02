@@ -40,6 +40,25 @@ export const listPublicProjectsResponseOneClaimsItemQuoteMax = 4000;
 
 export const listPublicProjectsResponseOneClaimsMax = 100;
 
+export const listPublicProjectsResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const listPublicProjectsResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const listPublicProjectsResponseOneImmersionScenesMax = 50;
+
+export const listPublicProjectsResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const ListPublicProjectsResponseItem = zod.object({
@@ -50,6 +69,7 @@ export const ListPublicProjectsResponseItem = zod.object({
   "latitude": zod.number().min(listPublicProjectsResponseOneLatitudeMin).max(listPublicProjectsResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(listPublicProjectsResponseOneLongitudeMin).max(listPublicProjectsResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -60,6 +80,7 @@ export const ListPublicProjectsResponseItem = zod.object({
   "asOf": zod.string().nullable()
 })).max(listPublicProjectsResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -68,6 +89,7 @@ export const ListPublicProjectsResponseItem = zod.object({
   "quote": zod.string()
 })).max(listPublicProjectsResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -76,6 +98,7 @@ export const ListPublicProjectsResponseItem = zod.object({
   "sourceUrl": zod.string()
 })).max(listPublicProjectsResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(listPublicProjectsResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -88,7 +111,30 @@ export const ListPublicProjectsResponseItem = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(listPublicProjectsResponseOneClaimsMax)
+})).max(listPublicProjectsResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(listPublicProjectsResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemXMin).max(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemYMin).max(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(listPublicProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(listPublicProjectsResponseOneImmersionScenesItemHotspotsMax)
+})).max(listPublicProjectsResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(listPublicProjectsResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -143,6 +189,25 @@ export const getPublicProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const getPublicProjectResponseOneClaimsMax = 100;
 
+export const getPublicProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const getPublicProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const getPublicProjectResponseOneImmersionScenesMax = 50;
+
+export const getPublicProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const GetPublicProjectResponse = zod.object({
@@ -153,6 +218,7 @@ export const GetPublicProjectResponse = zod.object({
   "latitude": zod.number().min(getPublicProjectResponseOneLatitudeMin).max(getPublicProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(getPublicProjectResponseOneLongitudeMin).max(getPublicProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -163,6 +229,7 @@ export const GetPublicProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(getPublicProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -171,6 +238,7 @@ export const GetPublicProjectResponse = zod.object({
   "quote": zod.string()
 })).max(getPublicProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -179,6 +247,7 @@ export const GetPublicProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(getPublicProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(getPublicProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -191,7 +260,30 @@ export const GetPublicProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(getPublicProjectResponseOneClaimsMax)
+})).max(getPublicProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(getPublicProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(getPublicProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(getPublicProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(getPublicProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(getPublicProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(getPublicProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(getPublicProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(getPublicProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(getPublicProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(getPublicProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(getPublicProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -318,6 +410,25 @@ export const listOrganizationProjectsResponseOneClaimsItemQuoteMax = 4000;
 
 export const listOrganizationProjectsResponseOneClaimsMax = 100;
 
+export const listOrganizationProjectsResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const listOrganizationProjectsResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const listOrganizationProjectsResponseOneImmersionScenesMax = 50;
+
+export const listOrganizationProjectsResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const ListOrganizationProjectsResponseItem = zod.object({
@@ -328,6 +439,7 @@ export const ListOrganizationProjectsResponseItem = zod.object({
   "latitude": zod.number().min(listOrganizationProjectsResponseOneLatitudeMin).max(listOrganizationProjectsResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(listOrganizationProjectsResponseOneLongitudeMin).max(listOrganizationProjectsResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -338,6 +450,7 @@ export const ListOrganizationProjectsResponseItem = zod.object({
   "asOf": zod.string().nullable()
 })).max(listOrganizationProjectsResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -346,6 +459,7 @@ export const ListOrganizationProjectsResponseItem = zod.object({
   "quote": zod.string()
 })).max(listOrganizationProjectsResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -354,6 +468,7 @@ export const ListOrganizationProjectsResponseItem = zod.object({
   "sourceUrl": zod.string()
 })).max(listOrganizationProjectsResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(listOrganizationProjectsResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -366,7 +481,30 @@ export const ListOrganizationProjectsResponseItem = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(listOrganizationProjectsResponseOneClaimsMax)
+})).max(listOrganizationProjectsResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(listOrganizationProjectsResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemXMin).max(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemYMin).max(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(listOrganizationProjectsResponseOneImmersionScenesItemHotspotsMax)
+})).max(listOrganizationProjectsResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(listOrganizationProjectsResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -431,6 +569,25 @@ export const submitProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const submitProjectResponseOneClaimsMax = 100;
 
+export const submitProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const submitProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const submitProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const submitProjectResponseOneImmersionScenesMax = 50;
+
+export const submitProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const SubmitProjectResponse = zod.object({
@@ -441,6 +598,7 @@ export const SubmitProjectResponse = zod.object({
   "latitude": zod.number().min(submitProjectResponseOneLatitudeMin).max(submitProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(submitProjectResponseOneLongitudeMin).max(submitProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -451,6 +609,7 @@ export const SubmitProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(submitProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -459,6 +618,7 @@ export const SubmitProjectResponse = zod.object({
   "quote": zod.string()
 })).max(submitProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -467,6 +627,7 @@ export const SubmitProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(submitProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(submitProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -479,7 +640,30 @@ export const SubmitProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(submitProjectResponseOneClaimsMax)
+})).max(submitProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(submitProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(submitProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(submitProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(submitProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(submitProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(submitProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(submitProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(submitProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(submitProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(submitProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(submitProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -533,6 +717,25 @@ export const getOrganizationProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const getOrganizationProjectResponseOneClaimsMax = 100;
 
+export const getOrganizationProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const getOrganizationProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const getOrganizationProjectResponseOneImmersionScenesMax = 50;
+
+export const getOrganizationProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const GetOrganizationProjectResponse = zod.object({
@@ -543,6 +746,7 @@ export const GetOrganizationProjectResponse = zod.object({
   "latitude": zod.number().min(getOrganizationProjectResponseOneLatitudeMin).max(getOrganizationProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(getOrganizationProjectResponseOneLongitudeMin).max(getOrganizationProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -553,6 +757,7 @@ export const GetOrganizationProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(getOrganizationProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -561,6 +766,7 @@ export const GetOrganizationProjectResponse = zod.object({
   "quote": zod.string()
 })).max(getOrganizationProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -569,6 +775,7 @@ export const GetOrganizationProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(getOrganizationProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(getOrganizationProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -581,7 +788,30 @@ export const GetOrganizationProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(getOrganizationProjectResponseOneClaimsMax)
+})).max(getOrganizationProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(getOrganizationProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(getOrganizationProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(getOrganizationProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(getOrganizationProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(getOrganizationProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -635,6 +865,25 @@ export const saveProjectBodyClaimsItemQuoteMax = 4000;
 
 export const saveProjectBodyClaimsMax = 100;
 
+export const saveProjectBodyImmersionScenesItemDateQuoteMax = 4000;
+
+export const saveProjectBodyImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const saveProjectBodyImmersionScenesItemHotspotsItemXMin = 0;
+export const saveProjectBodyImmersionScenesItemHotspotsItemXMax = 100;
+
+export const saveProjectBodyImmersionScenesItemHotspotsItemYMin = 0;
+export const saveProjectBodyImmersionScenesItemHotspotsItemYMax = 100;
+
+export const saveProjectBodyImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const saveProjectBodyImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const saveProjectBodyImmersionScenesItemHotspotsMax = 40;
+
+export const saveProjectBodyImmersionScenesMax = 50;
+
+export const saveProjectBodyImmersionComparisonsMax = 20;
+
 
 
 export const SaveProjectBody = zod.object({
@@ -645,6 +894,7 @@ export const SaveProjectBody = zod.object({
   "latitude": zod.number().min(saveProjectBodyLatitudeMin).max(saveProjectBodyLatitudeMax).nullable(),
   "longitude": zod.number().min(saveProjectBodyLongitudeMin).max(saveProjectBodyLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -655,6 +905,7 @@ export const SaveProjectBody = zod.object({
   "asOf": zod.string().nullable()
 })).max(saveProjectBodyStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -663,6 +914,7 @@ export const SaveProjectBody = zod.object({
   "quote": zod.string()
 })).max(saveProjectBodyUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -671,6 +923,7 @@ export const SaveProjectBody = zod.object({
   "sourceUrl": zod.string()
 })).max(saveProjectBodyMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(saveProjectBodyClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -683,7 +936,30 @@ export const SaveProjectBody = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(saveProjectBodyClaimsMax)
+})).max(saveProjectBodyClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(saveProjectBodyImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(saveProjectBodyImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(saveProjectBodyImmersionScenesItemHotspotsItemXMin).max(saveProjectBodyImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(saveProjectBodyImmersionScenesItemHotspotsItemYMin).max(saveProjectBodyImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(saveProjectBodyImmersionScenesItemHotspotsItemLimitationsMin).max(saveProjectBodyImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(saveProjectBodyImmersionScenesItemHotspotsMax)
+})).max(saveProjectBodyImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(saveProjectBodyImmersionComparisonsMax)
+}).optional()
 })
 
 export const saveProjectResponseOneTitleMax = 200;
@@ -712,6 +988,25 @@ export const saveProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const saveProjectResponseOneClaimsMax = 100;
 
+export const saveProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const saveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const saveProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const saveProjectResponseOneImmersionScenesMax = 50;
+
+export const saveProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const SaveProjectResponse = zod.object({
@@ -722,6 +1017,7 @@ export const SaveProjectResponse = zod.object({
   "latitude": zod.number().min(saveProjectResponseOneLatitudeMin).max(saveProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(saveProjectResponseOneLongitudeMin).max(saveProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -732,6 +1028,7 @@ export const SaveProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(saveProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -740,6 +1037,7 @@ export const SaveProjectResponse = zod.object({
   "quote": zod.string()
 })).max(saveProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -748,6 +1046,7 @@ export const SaveProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(saveProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(saveProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -760,7 +1059,30 @@ export const SaveProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(saveProjectResponseOneClaimsMax)
+})).max(saveProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(saveProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(saveProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(saveProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(saveProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(saveProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(saveProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(saveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(saveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(saveProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(saveProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(saveProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -855,6 +1177,25 @@ export const approveProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const approveProjectResponseOneClaimsMax = 100;
 
+export const approveProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const approveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const approveProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const approveProjectResponseOneImmersionScenesMax = 50;
+
+export const approveProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const ApproveProjectResponse = zod.object({
@@ -865,6 +1206,7 @@ export const ApproveProjectResponse = zod.object({
   "latitude": zod.number().min(approveProjectResponseOneLatitudeMin).max(approveProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(approveProjectResponseOneLongitudeMin).max(approveProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -875,6 +1217,7 @@ export const ApproveProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(approveProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -883,6 +1226,7 @@ export const ApproveProjectResponse = zod.object({
   "quote": zod.string()
 })).max(approveProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -891,6 +1235,7 @@ export const ApproveProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(approveProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(approveProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -903,7 +1248,30 @@ export const ApproveProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(approveProjectResponseOneClaimsMax)
+})).max(approveProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(approveProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(approveProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(approveProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(approveProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(approveProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(approveProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(approveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(approveProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(approveProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(approveProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(approveProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -957,6 +1325,25 @@ export const publishProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const publishProjectResponseOneClaimsMax = 100;
 
+export const publishProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const publishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const publishProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const publishProjectResponseOneImmersionScenesMax = 50;
+
+export const publishProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const PublishProjectResponse = zod.object({
@@ -967,6 +1354,7 @@ export const PublishProjectResponse = zod.object({
   "latitude": zod.number().min(publishProjectResponseOneLatitudeMin).max(publishProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(publishProjectResponseOneLongitudeMin).max(publishProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -977,6 +1365,7 @@ export const PublishProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(publishProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -985,6 +1374,7 @@ export const PublishProjectResponse = zod.object({
   "quote": zod.string()
 })).max(publishProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -993,6 +1383,7 @@ export const PublishProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(publishProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(publishProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -1005,7 +1396,30 @@ export const PublishProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(publishProjectResponseOneClaimsMax)
+})).max(publishProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(publishProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(publishProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(publishProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(publishProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(publishProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(publishProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(publishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(publishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(publishProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(publishProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(publishProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -1059,6 +1473,25 @@ export const unpublishProjectResponseOneClaimsItemQuoteMax = 4000;
 
 export const unpublishProjectResponseOneClaimsMax = 100;
 
+export const unpublishProjectResponseOneImmersionScenesItemDateQuoteMax = 4000;
+
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemIdMax = 100;
+
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemXMin = 0;
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemXMax = 100;
+
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemYMin = 0;
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemYMax = 100;
+
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin = 10;
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax = 2000;
+
+export const unpublishProjectResponseOneImmersionScenesItemHotspotsMax = 40;
+
+export const unpublishProjectResponseOneImmersionScenesMax = 50;
+
+export const unpublishProjectResponseOneImmersionComparisonsMax = 20;
+
 
 
 export const UnpublishProjectResponse = zod.object({
@@ -1069,6 +1502,7 @@ export const UnpublishProjectResponse = zod.object({
   "latitude": zod.number().min(unpublishProjectResponseOneLatitudeMin).max(unpublishProjectResponseOneLatitudeMax).nullable(),
   "longitude": zod.number().min(unpublishProjectResponseOneLongitudeMin).max(unpublishProjectResponseOneLongitudeMax).nullable(),
   "statistics": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "label": zod.string(),
   "value": zod.string(),
@@ -1079,6 +1513,7 @@ export const UnpublishProjectResponse = zod.object({
   "asOf": zod.string().nullable()
 })).max(unpublishProjectResponseOneStatisticsMax),
   "updates": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "title": zod.string(),
   "date": zod.string(),
@@ -1087,6 +1522,7 @@ export const UnpublishProjectResponse = zod.object({
   "quote": zod.string()
 })).max(unpublishProjectResponseOneUpdatesMax),
   "media": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "url": zod.string(),
   "type": zod.enum(['image', 'video']),
@@ -1095,6 +1531,7 @@ export const UnpublishProjectResponse = zod.object({
   "sourceUrl": zod.string()
 })).max(unpublishProjectResponseOneMediaMax),
   "claims": zod.array(zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(unpublishProjectResponseOneClaimsItemTextMax),
   "sourceUrl": zod.string(),
@@ -1107,7 +1544,30 @@ export const UnpublishProjectResponse = zod.object({
   "evidenceUrls": zod.array(zod.string()),
   "createdAt": zod.string()
 }))
-})).max(unpublishProjectResponseOneClaimsMax)
+})).max(unpublishProjectResponseOneClaimsMax),
+  "immersion": zod.object({
+  "scenes": zod.array(zod.object({
+  "mediaId": zod.string(),
+  "panoramaConfirmed": zod.boolean(),
+  "date": zod.string().nullable(),
+  "dateQuote": zod.string().max(unpublishProjectResponseOneImmersionScenesItemDateQuoteMax),
+  "hotspots": zod.array(zod.object({
+  "id": zod.string().max(unpublishProjectResponseOneImmersionScenesItemHotspotsItemIdMax),
+  "kind": zod.enum(['claim', 'media']),
+  "recordId": zod.string(),
+  "x": zod.number().min(unpublishProjectResponseOneImmersionScenesItemHotspotsItemXMin).max(unpublishProjectResponseOneImmersionScenesItemHotspotsItemXMax),
+  "y": zod.number().min(unpublishProjectResponseOneImmersionScenesItemHotspotsItemYMin).max(unpublishProjectResponseOneImmersionScenesItemHotspotsItemYMax),
+  "confirmed": zod.boolean(),
+  "limitations": zod.string().min(unpublishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMin).max(unpublishProjectResponseOneImmersionScenesItemHotspotsItemLimitationsMax)
+})).max(unpublishProjectResponseOneImmersionScenesItemHotspotsMax)
+})).max(unpublishProjectResponseOneImmersionScenesMax),
+  "comparisons": zod.array(zod.object({
+  "beforeMediaId": zod.string(),
+  "afterMediaId": zod.string(),
+  "claimId": zod.string(),
+  "confirmed": zod.boolean()
+})).max(unpublishProjectResponseOneImmersionComparisonsMax)
+}).optional()
 }).and(zod.object({
   "id": zod.string(),
   "organizationId": zod.string(),
@@ -1138,6 +1598,7 @@ export const listReviewerClaimsResponseOneQuoteMax = 4000;
 
 
 export const ListReviewerClaimsResponseItem = zod.object({
+  "publishedAt": zod.string().nullish(),
   "id": zod.string(),
   "text": zod.string().max(listReviewerClaimsResponseOneTextMax),
   "sourceUrl": zod.string(),

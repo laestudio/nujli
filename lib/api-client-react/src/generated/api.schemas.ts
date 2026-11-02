@@ -107,6 +107,8 @@ export interface Review {
 }
 
 export interface Claim {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   /** @maxLength 2000 */
   text: string;
@@ -118,6 +120,8 @@ export interface Claim {
 }
 
 export interface Statistic {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   label: string;
   value: string;
@@ -130,6 +134,8 @@ export interface Statistic {
 }
 
 export interface ProjectUpdate {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   title: string;
   date: string;
@@ -156,6 +162,8 @@ export const MediaPermissionStatus = {
 } as const;
 
 export interface Media {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   url: string;
   type: MediaType;
@@ -189,6 +197,62 @@ export type ReviewClaim = Claim & {
   organizationName: string;
 };
 
+export type ImmersiveHotspotKind = typeof ImmersiveHotspotKind[keyof typeof ImmersiveHotspotKind];
+
+
+export const ImmersiveHotspotKind = {
+  claim: 'claim',
+  media: 'media',
+} as const;
+
+export interface ImmersiveHotspot {
+  /** @maxLength 100 */
+  id: string;
+  kind: ImmersiveHotspotKind;
+  recordId: string;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  x: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  y: number;
+  confirmed: boolean;
+  /**
+     * @minLength 10
+     * @maxLength 2000
+     */
+  limitations: string;
+}
+
+export interface ImmersiveScene {
+  mediaId: string;
+  panoramaConfirmed: boolean;
+  /** @nullable */
+  date: string | null;
+  /** @maxLength 4000 */
+  dateQuote: string;
+  /** @maxItems 40 */
+  hotspots: ImmersiveHotspot[];
+}
+
+export interface EvidenceComparison {
+  beforeMediaId: string;
+  afterMediaId: string;
+  claimId: string;
+  confirmed: boolean;
+}
+
+export interface Immersion {
+  /** @maxItems 50 */
+  scenes: ImmersiveScene[];
+  /** @maxItems 20 */
+  comparisons: EvidenceComparison[];
+}
+
 export interface ProjectRevision {
   /** @maxLength 200 */
   title: string;
@@ -218,6 +282,7 @@ export interface ProjectRevision {
   media: Media[];
   /** @maxItems 100 */
   claims: Claim[];
+  immersion?: Immersion;
 }
 
 export type ProjectStatus = typeof ProjectStatus[keyof typeof ProjectStatus];

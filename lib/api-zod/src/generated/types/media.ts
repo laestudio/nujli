@@ -9,6 +9,8 @@ import type { MediaPermissionStatus } from './mediaPermissionStatus';
 import type { MediaType } from './mediaType';
 
 export interface Media {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   url: string;
   type: MediaType;

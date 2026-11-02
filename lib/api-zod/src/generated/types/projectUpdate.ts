@@ -7,6 +7,8 @@
  */
 
 export interface ProjectUpdate {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   title: string;
   date: string;

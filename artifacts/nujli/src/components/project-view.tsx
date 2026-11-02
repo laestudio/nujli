@@ -10,8 +10,13 @@ import { WorldMap, useReducedMotion } from '@/components/world-map';
 import { CopyLinkButton, FieldList, SourceLink, SourceSheet, type SourceTarget } from '@/components/source-sheet';
 import { FundingChart, ModeSwitch } from '@/components/funding-chart';
 import { KIND_EXPLAIN, KIND_LABEL, decodeFinancial, entryDate, fmtAmount, fmtDay, type FinancialEntry, type FinancialKind } from '@/lib/financial';
+import { ImmersiveViewer } from '@/components/immersive-viewer';
+import { Link } from 'wouter';
 
 const SINCE_KEY = 'nujli:last-donation';
+function readSince(): string { try { return localStorage.getItem(SINCE_KEY) ?? ''; } catch { return ''; } }
+function writeSince(v: string) { try { if (v) localStorage.setItem(SINCE_KEY, v); else localStorage.removeItem(SINCE_KEY); } catch { /* storage unavailable */ } }
+const pubOf = (r: { publishedAt?: string | null }): string | null => isoDay(r.publishedAt ?? null);
 type StatMode = 'cards' | 'table' | 'text';
 
 function embedUrl(url: string): string | null {
@@ -112,7 +117,9 @@ function KindTag({ kind }: { kind: FinancialKind }) {
 }
 
 export function ProjectView({ project, preview = false }: { project: Project; preview?: boolean }) {
-  const [since, setSince] = useState<string>(() => (preview ? '' : localStorage.getItem(SINCE_KEY) ?? ''));
+  const [since, setSince] = useState<string>(() => (preview ? '' : readSince()));
+  const [reportedSince, setReportedSince] = useState('');
+  const [evidenceOnly, setEvidenceOnly] = useState(false);
   const [openUpdate, setOpenUpdate] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<Media | null>(null);
   const [openQuote, setOpenQuote] = useState<string | null>(null);
@@ -126,26 +133,28 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
 
   useEffect(() => {
     if (preview) return;
-    if (since) localStorage.setItem(SINCE_KEY, since); else localStorage.removeItem(SINCE_KEY);
+    writeSince(since);
   }, [since, preview]);
 
   const isDemo = !!project.demonstration;
+  const publishedSince = (r: { publishedAt?: string | null }) => !since || (!!pubOf(r) && pubOf(r)! >= since);
+  const claims = project.claims.filter(publishedSince);
   const claimById = useMemo(() => new Map<string, Claim>(project.claims.map((c) => [c.id, c])), [project.claims]);
   const rows = useMemo<Row[]>(() => project.statistics.map((s) => ({
     stat: s,
     fin: isDemo ? decodeFinancial(s.quote) : null,
     claim: claimById.get(s.claimId),
   })), [project.statistics, isDemo, claimById]);
-  const visibleMedia = useMemo(() => project.media.filter((m) => preview || m.permissionStatus === 'approved'), [project.media, preview]);
+  const visibleMedia = project.media.filter((m) => (preview || m.permissionStatus === 'approved') && publishedSince(m));
   const images = visibleMedia.filter((m) => m.type === 'image');
   const videos = visibleMedia.filter((m) => m.type === 'video');
   const updates = useMemo(() => [...project.updates].sort((a, b) => (b.date || '').localeCompare(a.date || '')), [project.updates]);
   const updateFin = useMemo(() => new Map(updates.map((u) => [u.id, isDemo ? decodeFinancial(u.quote) ?? decodeFinancial(u.body) : null])), [updates, isDemo]);
 
-  const isNew = (s: Statistic) => !!since && !!isoDay(s.asOf) && isoDay(s.asOf)! >= since;
-  const filteredUpdates = since ? updates.filter((u) => (isoDay(u.date) ?? '') >= since) : updates;
-  const shownRows = since ? rows.filter((r) => isNew(r.stat)) : rows;
-  const undatedHidden = since ? project.statistics.filter((s) => !isoDay(s.asOf)).length : 0;
+  const isNew = (s: Statistic) => !!since && publishedSince(s);
+  const filteredUpdates = updates.filter(u => publishedSince(u) && (!reportedSince || (isoDay(u.date) ?? '') >= reportedSince));
+  const shownRows = rows.filter(r => publishedSince(r.stat) && (!reportedSince || (isoDay(r.stat.asOf) ?? '') >= reportedSince));
+  const undatedHidden = since ? project.statistics.filter((s) => !pubOf(s)).length : 0;
 
   // Headline, next cards and chart all respect the donation-date filter.
   const finRows = shownRows.filter((r) => r.fin);
@@ -153,7 +162,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
     const byDate = (k: FinancialKind) => finRows.filter((r) => r.fin!.kind === k && r.fin!.transactionDate).sort((a, b) => b.fin!.transactionDate!.localeCompare(a.fin!.transactionDate!))[0];
     return byDate('spent') ?? byDate('transferred') ?? byDate('received') ?? finRows[0] ?? shownRows.find((r) => r.stat.value?.trim()) ?? null;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [since, rows]);
+  }, [since, reportedSince, rows]);
   const nextCards = useMemo(() => {
     const picks: Row[] = [];
     const latest = (k: FinancialKind) => finRows.filter((r) => r.fin!.kind === k).sort((a, b) => (entryDate(b.fin!) ?? '').localeCompare(entryDate(a.fin!) ?? ''))[0];
@@ -161,7 +170,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
     for (const r of shownRows) { if (picks.length >= 5) break; if (!r.fin && r !== headline && !picks.includes(r)) picks.push(r); }
     return picks.slice(0, 5);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [since, rows, headline]);
+  }, [since, reportedSince, rows, headline]);
 
   const openRow = useCallback((r: Row) => setSheet({
     title: statTitle(r), valueText: statValueText(r), unit: statUnit(r), dateText: statDate(r),
@@ -180,7 +189,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
       const id = h.slice(5);
       const r = rows.find((x) => x.stat.id === id);
       if (!r) { setHiddenLink('That linked figure is not part of this page.'); return; }
-      if (since && !isNew(r.stat)) { setHiddenLink(h); return; }
+      if (!publishedSince(r.stat) || (reportedSince && (isoDay(r.stat.asOf) ?? '') < reportedSince)) { setHiddenLink(h); return; }
       setStatMode('cards'); setOpenQuote(id); setHiddenLink(null);
       openRow(r);
       // Scroll the card into view behind the sheet, but never move focus out of the open modal.
@@ -190,7 +199,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
       const id = h.slice(7);
       const u = updates.find((x) => x.id === id);
       if (!u) { setHiddenLink('That linked timeline entry is not part of this page.'); return; }
-      if (since && (isoDay(u.date) ?? '') < since) { setHiddenLink(h); return; }
+      if (!publishedSince(u) || (reportedSince && (isoDay(u.date) ?? '') < reportedSince)) { setHiddenLink(h); return; }
       setOpenUpdate(id); targetId = h;
     } else if (h === 'evidence' || h.startsWith('claim-')) {
       setEvidenceOpen(true); targetId = h;
@@ -201,7 +210,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
       if (el) { el.scrollIntoView({ block: 'start' }); el.focus({ preventScroll: true }); }
     }, 60);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, updates, since, openRow]);
+  }, [rows, updates, since, reportedSince, openRow]);
   useEffect(() => {
     applyHash();
     window.addEventListener('hashchange', applyHash);
@@ -250,29 +259,35 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
 
       <div className="sticky top-[var(--app-header-height,64px)] z-30 border-b border-ink/15 bg-paper/95 backdrop-blur">
         <div className="mx-auto max-w-6xl px-5 py-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <Link href="/explore" className="min-h-11 inline-flex items-center text-sm underline">Back to map</Link>
           <CalendarClock className="h-4 w-4 text-vermilion-deep" aria-hidden />
           <label htmlFor="since" className="text-sm font-medium">Since your last donation</label>
           <input id="since" type="date" value={since} onChange={(e) => setSince(e.target.value)} aria-describedby="since-help" className="min-h-11 w-full max-w-[13rem] min-w-0 rounded-md border border-ink/40 bg-paper px-2 font-mono text-sm" data-testid="input-since-date" />
-          {since && (
-            <button type="button" onClick={() => setSince('')} className="inline-flex min-h-11 items-center gap-1 text-sm underline underline-offset-2" data-testid="button-clear-since"><X className="h-4 w-4" aria-hidden />Show everything</button>
+          {(since || reportedSince) && (
+            <button type="button" onClick={() => { setSince(''); setReportedSince(''); }} className="inline-flex min-h-11 items-center gap-1 text-sm underline underline-offset-2" data-testid="button-clear-since"><X className="h-4 w-4" aria-hidden />Show everything</button>
           )}
+          <button type="button" aria-pressed={evidenceOnly} onClick={() => setEvidenceOnly(!evidenceOnly)} className="min-h-11 px-3 rounded-sm border border-ink/25 text-sm" data-testid="button-evidence-only">Evidence only</button>
+          {isDemo && <label className="text-sm">Reported entry date from <input type="date" value={reportedSince} onChange={e => setReportedSince(e.target.value)} className="min-h-11 rounded-md border border-ink/40 bg-paper px-2 font-mono text-sm" data-testid="input-reported-date" /></label>}
           <button type="button" onClick={() => setHelpOpen((o) => !o)} aria-expanded={helpOpen} aria-controls="help-panel" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium sm:ml-auto" data-testid="button-help"><CircleHelp className="h-4 w-4" aria-hidden />How to read this page</button>
           <p id="since-help" className="text-xs text-ink/75 w-full" aria-live="polite" data-testid="text-since-summary">
-            {since ? `Filtering by reported entry dates (transaction dates for money, as-of dates for figures), not publication dates. ${filteredUpdates.length} timeline entries, ${shownRows.length} dated figures on or after ${fmtDay(since)}.` : 'Showing full record. Pick a date to see entries reported on or after it.'}
+            {since ? `Filtering by each record's first publication on nujli., not event or transaction dates. ${filteredUpdates.length} timeline entries and ${shownRows.length} figures match. Unknown publication dates are excluded.` : 'Showing the full publication history. Pick your last donation date to see records first published since then.'}
+            {reportedSince && ` Also restricted to reported entry dates on or after ${fmtDay(reportedSince)}; this is a separate filter, not donation attribution.`}
           </p>
-          {since && <p className="text-xs text-ink/75">Calculated by nujli. from reported data: these counts use the dated entries and figures shown below.</p>}
+          {since && <p className="text-xs text-ink/75">Counts use the filtered records shown below. This does not show what your donation paid for.</p>}
         </div>
         <nav aria-label="Project sections" className="mx-auto max-w-6xl px-5 flex gap-1 overflow-x-auto text-sm">
           {[['story', 'Story'], ...(keyMode === 'cards' && nextCards.length ? [['next', 'Next']] : []), ['timeline', 'Timeline'], ...(rows.some((r) => r.fin) ? [['funding', 'Funding']] : []), ['statistics', 'Figures'], ['gallery', 'Photos'], ['video', 'Video'], ['evidence', 'Evidence']].map(([s, l]) => <a key={s} href={`#${s}`} className="inline-flex min-h-11 items-center px-2 whitespace-nowrap text-ink/80 hover:text-ink underline-offset-4 hover:underline">{l}</a>)}
         </nav>
       </div>
 
+      {!evidenceOnly && <ImmersiveViewer project={project} media={visibleMedia} claims={claims} />}
+
       <div className="mx-auto max-w-6xl px-5" id="project-main">
         {since && (
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border-l-4 border-vermilion-deep bg-paper-2 px-4 py-3" role="status" data-testid="strip-since">
             <CalendarClock className="h-4 w-4" aria-hidden />
             <p className="font-medium">Here's what this organization has reported since you last gave.</p>
-            <p className="text-sm text-ink/80 w-full">Entries with a reported date on or after {fmtDay(since)}. Headline, cards, chart and figures below use only these entries.</p>
+            <p className="text-sm text-ink/80 w-full">Records first published on or after {fmtDay(since)}. Headline, cards, chart and figures below respect this filter. Recorded dates remain context, not proof of donation allocation.</p>
           </div>
         )}
         {helpOpen && (
@@ -301,7 +316,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
           <div role="alert" className="mt-6 flex flex-wrap items-center gap-3 rounded-md border border-ink/40 bg-paper-2 p-4 text-sm" data-testid="notice-hidden-link">
             <AlertTriangle className="h-4 w-4" aria-hidden />
             {hiddenLink.startsWith('stat-') || hiddenLink.startsWith('update-')
-              ? <><span>The linked entry is hidden by your "since your last donation" date.</span><button type="button" onClick={() => { setSince(''); window.setTimeout(applyHash, 0); }} className="min-h-11 font-medium underline" data-testid="button-show-linked">Show everything and open it</button></>
+              ? <><span>The linked entry is hidden by your date filters.</span><button type="button" onClick={() => { setSince(''); setReportedSince(''); window.setTimeout(applyHash, 0); }} className="min-h-11 font-medium underline" data-testid="button-show-linked">Show everything and open it</button></>
               : <span>{hiddenLink}</span>}
             <button type="button" onClick={() => setHiddenLink(null)} className="grid h-11 w-11 place-items-center ml-auto" aria-label="Dismiss notice"><X className="h-4 w-4" aria-hidden /></button>
           </div>
@@ -362,7 +377,7 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
                 </div>
               </div>
             </div>
-          ) : <p className="mt-4 text-ink/80" data-testid="text-headline-empty">{since ? `No dated figure was reported on or after ${fmtDay(since)}.` : 'No sourced figure has been reported yet.'}</p>}
+          ) : <p className="mt-4 text-ink/80" data-testid="text-headline-empty">{since || reportedSince ? 'No sourced figures match these date filters.' : 'No sourced figure has been reported yet.'}</p>}
           <div id="overview" className="mt-8 scroll-mt-40">
             {project.overview ? (
               <p className="max-w-3xl text-lg leading-relaxed whitespace-pre-line text-ink/85" data-testid="text-overview">{project.overview}</p>
@@ -443,9 +458,9 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
         </Section>
 
         {(chartEntries.length > 0 || (since && rows.some((r) => r.fin))) && (
-          <Section id="funding" kicker="Funding" title="Funding over time" intro={since ? `Only entries with a transaction date on or after ${fmtDay(since)}. Choose one type and currency at a time.` : 'Individual reported entries, each at its own date. Choose one type and currency at a time.'}>
-            {chartEntries.length === 0 && <p className="text-sm">No money entries were reported on or after {fmtDay(since)}.</p>}
-            <FundingChart key={since} entries={chartEntries} onOpen={openById} />
+          <Section id="funding" kicker="Funding" title="Funding over time" intro="Individual reported entries, each plotted at its reported date. Date filters above restrict which entries are included. Choose one type and currency at a time.">
+            {chartEntries.length === 0 && <p className="text-sm">No money entries match these date filters.</p>}
+            <FundingChart key={`${since}:${reportedSince}`} entries={chartEntries} onOpen={openById} />
           </Section>
         )}
 
@@ -456,11 +471,11 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
               { v: 'table', label: 'Table', icon: <Table2 className="h-4 w-4" aria-hidden /> },
               { v: 'text', label: 'Read as text', icon: <FileText className="h-4 w-4" aria-hidden /> },
             ]} />
-            {since && undatedHidden > 0 && <p className="text-xs text-ink/75">{undatedHidden} undated figure{undatedHidden === 1 ? '' : 's'} not counted as new</p>}
+            {since && undatedHidden > 0 && <p className="text-xs text-ink/75">{undatedHidden} figure{undatedHidden === 1 ? '' : 's'} with unknown publication date not counted as new</p>}
           </div>}>
           {shownRows.length === 0 ? (
-            <Empty kicker="Figures" title={since ? 'No dated figures since that date.' : 'No figures with a quotable source.'}>
-              {since ? 'Figures without a reported date are never treated as new.' : 'Figures appear here only when the original page states them and the quote is preserved.'}
+            <Empty kicker="Figures" title={since || reportedSince ? 'No figures match these date filters.' : 'No figures with a quotable source.'}>
+              {since ? 'Figures without a known first-publication date are never treated as new.' : 'Figures appear here only when the original page states them and the quote is preserved.'}
             </Empty>
           ) : groups.map((g) => (
             <div key={g.key} className="mb-8">
@@ -573,16 +588,16 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
           <Kicker className="text-ink/75">Evidence</Kicker>
           <h2 id="evidence-h" className="mt-2 font-display text-2xl md:text-3xl font-semibold">
             <button type="button" onClick={() => setEvidenceOpen((o) => !o)} aria-expanded={evidenceOpen} aria-controls="evidence-body" className="inline-flex min-h-11 items-center gap-2 text-left" data-testid="button-toggle-evidence">
-              Evidence panel <span className="text-base font-normal text-ink/75">({project.claims.length} claim{project.claims.length === 1 ? '' : 's'})</span>
+              Evidence panel <span className="text-base font-normal text-ink/75">({claims.length} claim{claims.length === 1 ? '' : 's'})</span>
               <ChevronDown className={cn('h-5 w-5 transition-transform', evidenceOpen && 'rotate-180')} aria-hidden />
             </button>
           </h2>
           <div id="evidence-body" hidden={!evidenceOpen} className="mt-6">
-            {project.claims.length === 0 ? (
-              <Empty kicker="Claims" title="No claims recorded.">A claim needs a quote and a source link before it can be shown.</Empty>
+            {claims.length === 0 ? (
+              <Empty kicker="Claims" title={since ? 'No claims first published since that date.' : 'No claims recorded.'}>A claim needs a quote and a source link before it can be shown.</Empty>
             ) : (
               <ul className="divide-y divide-ink/10 border-y border-ink/10">
-                {project.claims.map((c) => {
+                {claims.map((c) => {
                   const fin = isDemo ? decodeFinancial(c.text) : null;
                   return (
                     <li key={c.id} id={`claim-${c.id}`} className="py-5 grid gap-3 md:grid-cols-[1fr_auto]" data-testid={`row-claim-${c.id}`}>

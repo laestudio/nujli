@@ -9,6 +9,8 @@ import type { ClaimLabel } from './claimLabel';
 import type { Review } from './review';
 
 export interface Claim {
+  /** @nullable */
+  readonly publishedAt?: string | null;
   id: string;
   /** @maxLength 2000 */
   text: string;

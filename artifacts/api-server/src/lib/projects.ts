@@ -5,6 +5,8 @@ import { GetPublicProjectResponse, SaveProjectBody } from "@workspace/api-zod";
 import { z } from "zod";
 import { HttpError, requireCondition } from "./errors";
 import { safeUrl } from "./safe-fetch";
+import { emptyImmersion, publicImmersion, remapImmersion, validateImmersion } from "./immersion";
+import { withPublicationDates } from "./publication-dates";
 
 export type Revision = z.infer<typeof SaveProjectBody>;
 export const normalize = (s: string) => s.replace(/\s+/g, " ").trim().toLowerCase();
@@ -38,8 +40,14 @@ export async function getProject(id: string, visibility: { public?: boolean; org
     title: p.title, overview: p.overview, cause: p.cause, locationName: p.location_name,
     latitude: p.latitude, longitude: p.longitude, sourceUrl: p.source_url, status: p.status,
     warnings: p.warnings, isSample: p.is_sample, demonstration: p.demonstration ?? null, approvedAt: iso(p.approved_at), publishedAt: iso(p.published_at),
-    createdAt: iso(p.created_at), updatedAt: iso(p.updated_at), statistics: statistics.rows, updates: updates.rows, media: media.rows,
-    claims: claims.rows.map(c => ({...c, label: c.reviews.length ? "Independently Reviewed" : "Organization Reported"})),
+    createdAt: iso(p.created_at), updatedAt: iso(p.updated_at),
+    statistics: withPublicationDates("statistics", statistics.rows, p.evidence_publications ?? {}),
+    updates: withPublicationDates("updates", updates.rows, p.evidence_publications ?? {}),
+    media: withPublicationDates("media", media.rows, p.evidence_publications ?? {}),
+    claims: withPublicationDates("claims", claims.rows.map(c => ({...c, label: c.reviews.length ? "Independently Reviewed" : "Organization Reported"})), p.evidence_publications ?? {}),
+    immersion: visibility.public
+      ? publicImmersion(p.immersion ?? emptyImmersion(), new Set(media.rows.map(m => m.id)), new Set(claims.rows.map(c => c.id)))
+      : p.immersion ?? emptyImmersion(),
   });
 }
 export async function audit(client: PoolClient, actor: string, action: string, id: string) {
@@ -103,7 +111,37 @@ export async function saveRevision(id: string, organizationId: string, revision:
       await client.query("UPDATE projects SET source_url=$2,source_text=$3,source_hash=$4,warnings=$5,source_evidence=$6 WHERE id=$1",[id,generated.sourceUrl,generated.corpus,generated.hash,JSON.stringify(generated.warnings),JSON.stringify(generated.sources)]);
     }
     validateEvidence(revision, generated?.corpus ?? p.source_text ?? "", generated?.sourceUrl ?? p.source_url, generated?.sources ?? p.source_evidence ?? {});
+    // Extraction cannot authorize spatial claims, regardless of the model output.
+    if (jobId) revision = { ...revision, immersion: emptyImmersion() };
+    validateImmersion(revision, {
+      ...(generated?.sources ?? p.source_evidence ?? {}),
+      [safeUrl(generated?.sourceUrl ?? p.source_url).toString()]: generated?.corpus ?? p.source_text ?? "",
+    }, hasDocumentedDate);
     const oldClaims = await client.query("SELECT * FROM evidence_claims WHERE project_id=$1", [id]);
+    const oldMedia = await client.query("SELECT * FROM media WHERE project_id=$1", [id]);
+    // A confirmed placement must describe saved evidence, not a new URL or changed quotation
+    // smuggled into the same request. Save corrections, then confirm the resulting records.
+    for (const scene of revision.immersion?.scenes ?? []) {
+      const sceneMedia = revision.media.find(m => m.id === scene.mediaId)!;
+      const original = oldMedia.rows.find(m => m.id === scene.mediaId);
+      requireCondition(original, 422, "Save media before adding an immersive scene.");
+      const confirmed = scene.panoramaConfirmed || scene.hotspots.some(h => h.confirmed) ||
+        revision.immersion?.comparisons.some(c => c.confirmed && [c.beforeMediaId,c.afterMediaId].includes(scene.mediaId));
+      if (confirmed) requireCondition(original.url === sceneMedia.url && original.type === sceneMedia.type &&
+        original.source_url === sceneMedia.sourceUrl && original.caption === sceneMedia.caption,
+        422, "Save media corrections before confirming its immersive evidence.");
+      for (const h of scene.hotspots.filter(h => h.confirmed)) {
+        if (h.kind === "claim") {
+          const c = revision.claims.find(c => c.id === h.recordId)!;
+          requireCondition(oldClaims.rows.some(o => o.id === c.id && o.text === c.text && o.quote === c.quote && o.source_url === c.sourceUrl),
+            422, "Save claim corrections before confirming a hotspot.");
+        } else {
+          const m = revision.media.find(m => m.id === h.recordId)!;
+          requireCondition(oldMedia.rows.some(o => o.id === m.id && o.url === m.url && o.type === m.type && o.source_url === m.sourceUrl && o.caption === m.caption),
+            422, "Save media corrections before confirming a hotspot.");
+        }
+      }
+    }
     const claimMap = new Map<string, string>();
     const kept: string[] = [];
     for (const c of revision.claims) {
@@ -119,7 +157,14 @@ export async function saveRevision(id: string, organizationId: string, revision:
     await client.query("DELETE FROM project_updates WHERE project_id=$1", [id]);
     for (const u of revision.updates) await client.query("INSERT INTO project_updates(project_id,title,date,body,source_url,quote) VALUES($1,$2,$3,$4,$5,$6)", [id,u.title,u.date,u.body,u.sourceUrl,u.quote]);
     await client.query("DELETE FROM media WHERE project_id=$1", [id]);
-    for (const m of revision.media) await client.query("INSERT INTO media(project_id,url,type,caption,permission_status,source_url) VALUES($1,$2,$3,$4,$5,$6)", [id,m.url,m.type,m.caption,m.permissionStatus,m.sourceUrl]);
+    const mediaMap = new Map<string, string>();
+    for (const m of revision.media) {
+      const saved = await client.query("INSERT INTO media(project_id,url,type,caption,permission_status,source_url) VALUES($1,$2,$3,$4,$5,$6) RETURNING id", [id,m.url,m.type,m.caption,m.permissionStatus,m.sourceUrl]);
+      mediaMap.set(m.id, saved.rows[0].id);
+    }
+    await client.query("UPDATE projects SET immersion=$2 WHERE id=$1", [
+      id, JSON.stringify(remapImmersion(revision.immersion ?? emptyImmersion(), mediaMap, claimMap)),
+    ]);
     await client.query(`UPDATE projects SET title=$2,overview=$3,cause=$4,location_name=$5,latitude=$6,longitude=$7,status='draft',approved_at=NULL,published_at=NULL,updated_at=now() WHERE id=$1`,
       [id,revision.title,revision.overview,revision.cause,revision.locationName,
         revision.latitude === null ? null : Math.round(revision.latitude), revision.longitude === null ? null : Math.round(revision.longitude)]);

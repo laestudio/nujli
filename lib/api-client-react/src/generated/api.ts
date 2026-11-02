@@ -49,6 +49,33 @@ import type {
 import { customFetch } from '../custom-fetch';
 import type { ErrorType , BodyType } from '../custom-fetch';
 
+// https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
+type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
+T,
+>() => T extends Y ? 1 : 2
+? A
+: B;
+
+type WritableKeys<T> = {
+[P in keyof T]-?: IfEquals<
+  { [Q in P]: T[P] },
+  { -readonly [Q in P]: T[P] },
+  P
+>;
+}[keyof T];
+
+type UnionToIntersection<U> =
+  (U extends any ? (k: U)=>void : never) extends ((k: infer I)=>void) ? I : never;
+type DistributeReadOnlyOverUnions<T> = T extends any ? NonReadonly<T> : never;
+
+type Writable<T> = Pick<T, WritableKeys<T>>;
+type NonReadonly<T> = [T] extends [UnionToIntersection<T>] ? {
+  [P in keyof Writable<T>]: T[P] extends object
+    ? NonReadonly<NonNullable<T[P]>>
+    : T[P];
+} : DistributeReadOnlyOverUnions<T>;
+
+
 type AwaitedInput<T> = PromiseLike<T> | T;
 
       type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
@@ -1054,7 +1081,7 @@ export const getSaveProjectUrl = (id: string,) => {
 }
 
 export const saveProject = async (id: string,
-    projectRevision: ProjectRevision, options?: Parameters<typeof customFetch>[1]): Promise<Project> => {
+    projectRevision: NonReadonly<ProjectRevision>, options?: Parameters<typeof customFetch>[1]): Promise<Project> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1113,9 +1140,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type SaveProjectMutationResult = NonNullable<Awaited<ReturnType<typeof saveProject>>>
-    export type SaveProjectMutationBody = BodyType<ProjectRevision>
+    export type SaveProjectMutationBody = BodyType<NonReadonly<ProjectRevision>>
     export type SaveProjectMutationError = ErrorType<unknown>
-    export type SaveProjectMutationVariables = {id: string;data: BodyType<ProjectRevision>}
+    export type SaveProjectMutationVariables = {id: string;data: BodyType<NonReadonly<ProjectRevision>>}
 
     export const useSaveProject = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveProject>>, TError,SaveProjectMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}

@@ -7,6 +7,8 @@ export const projects = pgTable("projects", {
   sourceUrl: text("source_url").notNull(),
   extraSourceUrls: jsonb("extra_source_urls").notNull().default([]),
   sourceEvidence: jsonb("source_evidence").notNull().default({}),
+  immersion: jsonb("immersion").notNull().default({ scenes: [], comparisons: [] }),
+  evidencePublications: jsonb("evidence_publications").notNull().default({}),
   submissionPermissionAt: timestamp("submission_permission_at", { withTimezone: true }),
   title: text("title").notNull().default("Untitled project"),
   overview: text("overview").notNull().default(""),

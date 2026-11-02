@@ -283,3 +283,8 @@ input::placeholder, textarea::placeholder { color: #B9B4AA; opacity: 1; }
 }
 
 .bar-neg { background-image: repeating-linear-gradient(45deg, transparent 0 4px, rgba(243,236,221,.55) 4px 6px); }
+/* Immersive hotspots: white/silver, monochrome */
+.nj-hs { display: block; width: 28px; height: 28px; border-radius: 9999px; background: radial-gradient(circle, #FFFFFF 0 30%, rgba(214,214,210,.55) 31% 60%, transparent 61%); border: 2px solid #E6E6E2; box-shadow: 0 1px 6px rgba(0,0,0,.6); cursor: pointer; }
+.nj-hs-sm { width: 14px; height: 14px; border-width: 1.5px; }
+.nj-hs-btn { padding: 8px; border-radius: 9999px; }
+.nj-hs-btn:hover .nj-hs, .nj-hs-btn:focus-visible .nj-hs { border-color: #D42A2F; }
