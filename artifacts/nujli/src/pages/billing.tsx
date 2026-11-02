@@ -30,12 +30,13 @@ export default function Billing() {
       <section className="mx-auto max-w-5xl px-5 py-14 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div className="min-w-0">
           <Journey current="Pay" className="mb-8" />
-          {me.data?.developerEligible && <div className="mb-6 rounded-md border border-vermilion p-4" data-testid="developer-skip-panel">
+          {import.meta.env.DEV && <div className="mb-6 rounded-md border border-vermilion p-4" data-testid="developer-skip-panel">
             <p className="text-sm font-medium">Temporary developer demo</p>
-            <p className="mt-1 text-sm text-ink/75">Skip payment and try Generate → Review → Publish. No charge, no verified purchase.</p>
+            <p className="mt-1 text-sm text-ink/75">{!me.isSignedIn ? 'Sign in with your authorized developer account to skip payment. No purchase is required.' : me.data?.developerEligible ? 'Skip payment and try Generate → Review → Publish. No charge, no verified purchase.' : 'Developer access is restricted to the authorized account. This account has not been authorized.'}</p>
             <button type="button" className="mt-3 inline-flex min-h-11 items-center rounded-sm bg-vermilion px-5 font-semibold text-white disabled:opacity-50"
-              data-testid="button-skip-payment" disabled={developer.isPending}
+              data-testid="button-skip-payment" disabled={!me.authLoaded || developer.isPending || (me.isSignedIn && !me.data?.developerEligible)}
               onClick={() => {
+                if (!me.isSignedIn) { navigate('/sign-in?developer_demo=1'); return; }
                 if (!me.data?.organizationId) { navigate('/organization'); return; }
                 developer.mutate({data:{enabled:true}}, {onSuccess: access => {
                   if (access.active && access.status === 'developer') navigate('/organization/new');
@@ -43,6 +44,7 @@ export default function Billing() {
               }}>
               {developer.isPending ? 'Opening developer demo…' : 'Skip payment — developer demo'}
             </button>
+            {me.isError && <div className="mt-3"><ErrorState error={me.error} onRetry={() => me.refetch()} title="Could not check developer access." /></div>}
             {developer.isError && <div className="mt-3"><ErrorState error={developer.error} title="Could not open developer demo." /></div>}
             {developer.isSuccess && !developer.data.active && <p role="alert" className="mt-3 text-sm">{developer.data.message}</p>}
           </div>}
