@@ -10,11 +10,11 @@ Never invent humanitarian projects, statistics, photos, videos, testimonials, pa
 
 **How to apply:** Final acceptance reports use PASS, FAIL, BLOCKED, NOT TESTED. Live Whop payment acceptance remains blocked until a purchase and entitlement check have actually run. Preserve the existing Whop product; never silently replace it or hardcode its price.
 
-The owner may use an explicitly granted developer-access button to access organization tools without paying in development. This is not a purchase or a verified membership.
+The owner may use an explicitly granted demo-access button to access organization tools without paying, including on the published site. This is not a purchase or a verified membership.
 
-**Why:** The user requested personal developer access to the inner organization experience without payment.
+**Why:** The user requested personal developer access without payment and explicitly needed the skip button on the published site, not only in development.
 
-**How to apply:** Require the signed-in, server-authorized development account, visibly label developer status, leave ordinary users' Whop gates intact, disable this privilege in production, and do not extend independent-review permissions.
+**How to apply:** Require a signed-in, server-authorized owner. Production must verify the configured owner's primary email through the auth provider; development metadata alone must not grant production access. Visibly label demo status, preserve normal Whop gates, and never extend reviewer permissions.
 
 Developer testing may have a larger, still bounded generation allowance than ordinary paid accounts.
 

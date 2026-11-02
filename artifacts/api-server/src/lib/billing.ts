@@ -32,7 +32,7 @@ export function membershipState(m: any) {
 }
 export async function entitlement(organizationId?: string) {
   if (!organizationId) return {active:false,status:"unpaid",message:"Create an organization and purchase a verified membership.",expiresAt:null};
-  if (await developerEntitlement(organizationId)) return {active:true,status:"developer",message:"Developer access for this development instance. No payment or Whop membership has been verified.",expiresAt:null};
+  if (await developerEntitlement(organizationId)) return {active:true,status:"developer",message:"Authorized owner demo access. No payment or Whop membership has been verified.",expiresAt:null};
   if (!process.env.WHOP_WEBHOOK_SECRET) return {active:false,status:"blocked",message:"Payment verification is not configured. Paid features are locked.",expiresAt:null};
   const {rows} = await pool.query("SELECT * FROM memberships WHERE organization_id=$1 ORDER BY checked_at DESC LIMIT 1", [organizationId]);
   if (!rows[0]) return {active:false,status:"unpaid",message:"No verified membership. Opening checkout does not grant access.",expiresAt:null};

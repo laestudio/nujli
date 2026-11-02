@@ -2,7 +2,7 @@ import { getAuth, clerkClient } from "@clerk/express";
 import type { Request } from "express";
 import { pool } from "@workspace/db";
 import { HttpError } from "./errors";
-import { eligibleDeveloper } from "./developer-access";
+import { eligibleDemoUser } from "./developer-access";
 
 export async function identity(req: Request) {
   const userId = getAuth(req).userId;
@@ -11,7 +11,7 @@ export async function identity(req: Request) {
   const user = await clerkClient.users.getUser(userId);
   const role = user.publicMetadata.role === "reviewer" ? "reviewer" as const : "organization" as const;
   const result = await pool.query("SELECT * FROM organizations WHERE owner_id=$1", [userId]);
-  return { userId, role, organization: result.rows[0] ?? null, developerEligible: eligibleDeveloper(user.publicMetadata) };
+  return { userId, role, organization: result.rows[0] ?? null, developerEligible: eligibleDemoUser(user) };
 }
 export type Identity = Awaited<ReturnType<typeof identity>>;
 export async function organizationIdentity(req: Request) {

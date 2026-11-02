@@ -31,7 +31,7 @@ export function SignInPage() {
   return (
     <AuthFrame title="Back to the evidence." line="Review drafts, confirm media permissions and publish when every line holds up.">
       <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`}
-        forceRedirectUrl={import.meta.env.DEV && new URLSearchParams(window.location.search).get('developer_demo') === '1' ? `${basePath}/billing` : undefined} />
+        forceRedirectUrl={new URLSearchParams(window.location.search).get('developer_demo') === '1' ? `${basePath}/billing` : undefined} />
     </AuthFrame>
   );
 }

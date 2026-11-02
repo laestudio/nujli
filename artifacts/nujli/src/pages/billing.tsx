@@ -30,7 +30,7 @@ export default function Billing() {
       <section className="mx-auto max-w-5xl px-5 py-14 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div className="min-w-0">
           <Journey current="Pay" className="mb-8" />
-          {import.meta.env.DEV && <div className="mb-6 rounded-md border border-vermilion p-4" data-testid="developer-skip-panel">
+          {(!me.isSignedIn || me.data?.developerEligible || import.meta.env.DEV) && <div className="mb-6 rounded-md border border-vermilion p-4" data-testid="developer-skip-panel">
             <p className="text-sm font-medium">Temporary developer demo</p>
             <p className="mt-1 text-sm text-ink/75">{!me.isSignedIn ? 'Sign in with your authorized developer account to skip payment. No purchase is required.' : me.data?.developerEligible ? 'Skip payment and try Generate → Review → Publish. No charge, no verified purchase.' : 'Developer access is restricted to the authorized account. This account has not been authorized.'}</p>
             <button type="button" className="mt-3 inline-flex min-h-11 items-center rounded-sm bg-vermilion px-5 font-semibold text-white disabled:opacity-50"
