@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Show, useAuth, useClerk } from '@clerk/react';
 import { Menu, X } from 'lucide-react';
@@ -10,7 +10,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 export function Wordmark({ className, variant = 'dark' }: { className?: string; dark?: boolean; variant?: 'dark' | 'light' }) {
   return (
     <span className={cn('inline-flex shrink-0 text-2xl leading-none', className)}>
-      <img src={`${basePath}/${variant === 'light' ? 'logo-light.svg' : 'logo.svg'}`} alt="nujli." width={356} height={170} className="h-[1.8em] w-auto max-w-none" />
+      <img src={`${basePath}/${variant === 'light' ? 'logo-light.svg' : 'logo.svg'}`} alt="nujli." width={356} height={170} className="h-[1.8em] w-auto max-w-full" />
     </span>
   );
 }
@@ -40,6 +40,15 @@ function NavLink({ href, children, dark, onClick }: { href: string; children: Re
 }
 
 export function Header({ dark }: { dark?: boolean }) {
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const update = () => document.documentElement.style.setProperty('--app-header-height', `${headerRef.current?.getBoundingClientRect().height ?? 64}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(headerRef.current);
+    return () => observer.disconnect();
+  }, []);
   const [open, setOpen] = useState(false);
   const { signOut } = useClerk();
   const { data: me } = useMe();
@@ -57,25 +66,25 @@ export function Header({ dark }: { dark?: boolean }) {
       </Show>
     </>
   );
-  const btn = cn('text-sm font-medium px-3.5 py-2 rounded-sm border transition-colors',
+  const btn = cn('inline-flex min-h-11 items-center text-sm font-medium px-3.5 py-2 rounded-sm border transition-colors',
     dark ? 'border-paper/25 text-paper hover:bg-paper hover:text-ink' : 'border-ink/25 text-ink hover:bg-ink hover:text-paper');
   return (
-    <header className={cn('sticky top-0 z-40 border-b backdrop-blur', dark ? 'bg-ink/85 border-paper/10' : 'bg-paper/85 border-ink/10')}>
+    <header ref={headerRef} className={cn('sticky top-0 z-40 border-b backdrop-blur', dark ? 'bg-ink/85 border-paper/10' : 'bg-paper/85 border-ink/10')}>
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 bg-vermilion text-white px-3 py-1 rounded-sm">Skip to content</a>
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-5">
-        <Link href="/" data-testid="link-home" aria-label="nujli. home" className="flex items-center gap-2">
+      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-2 min-w-0">
+        <Link href="/" data-testid="link-home" aria-label="nujli. home" className="flex min-h-11 min-w-0 max-w-full flex-wrap items-center gap-x-2">
           <Wordmark dark={dark} />
           <bdi lang="ar" dir="rtl" className={cn('ar text-lg', dark ? 'text-paper/65' : 'text-ink/65')}>فلسطين</bdi>
         </Link>
         <nav className="ml-auto hidden lg:flex items-center gap-5" aria-label="Primary">{links}</nav>
-        <div className="ml-auto lg:ml-2 flex items-center gap-2">
+        <div className="ml-auto lg:ml-2 flex flex-wrap items-center gap-2 min-w-0">
           <Show when="signed-out">
             <Link href="/sign-in" className={btn} data-testid="link-sign-in">Sign in</Link>
           </Show>
           <Show when="signed-in">
             <button type="button" className={cn(btn, 'hidden sm:inline-flex')} onClick={() => signOut({ redirectUrl: basePath || '/' })} data-testid="button-sign-out">Sign out</button>
           </Show>
-          <button type="button" className={cn('lg:hidden grid h-10 w-10 place-items-center rounded-sm', dark ? 'text-paper' : 'text-ink')} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(!open)} data-testid="button-menu">
+          <button type="button" className={cn('lg:hidden grid h-11 w-11 place-items-center rounded-sm', dark ? 'text-paper' : 'text-ink')} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(!open)} data-testid="button-menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -97,26 +106,26 @@ export function Footer() {
     <footer className="keep-dark bg-ink text-paper border-t border-paper/10">
       <div className="mx-auto max-w-7xl px-5 py-14 grid gap-10 md:grid-cols-[2fr_1fr_1fr]">
         <div>
-          <div className="flex items-baseline gap-3"><Wordmark dark className="text-4xl" /><bdi lang="ar" dir="rtl" className="ar text-xl text-paper/65">فلسطين</bdi></div>
-          <p className="meta mt-3 text-paper/55">Impact Revealed. <bdi lang="ar" dir="rtl" className="ar normal-case tracking-normal text-sm">الأثر يتجلّى</bdi></p>
+          <div className="flex flex-wrap items-baseline gap-3"><Wordmark dark className="text-4xl" /><bdi lang="ar" dir="rtl" className="ar text-xl text-paper/75">فلسطين</bdi></div>
+          <p className="meta mt-3 text-paper/75">Impact Revealed. <bdi lang="ar" dir="rtl" className="ar normal-case tracking-normal text-sm">الأثر يتجلّى</bdi></p>
           <div className="tz mt-5" aria-hidden />
           <p className="mt-5 max-w-sm text-sm text-paper/65 leading-relaxed">Every figure on nujli. links back to the public page it came from. If a source cannot be shown, the claim is not published.</p>
         </div>
         <div className="flex flex-col gap-2 text-sm">
-          <p className="meta text-paper/45 mb-1">Donors</p>
+          <p className="meta text-paper/75 mb-1">Donors</p>
           <Link href="/about" className="text-paper/75 hover:text-paper" data-testid="link-footer-mission">Our mission</Link>
           <Link href="/explore" className="text-paper/75 hover:text-paper">Explore the map</Link>
           <Link href="/methodology" className="text-paper/75 hover:text-paper">Evidence definitions</Link>
           <Link href="/visual-build" className="text-paper/75 hover:text-paper">Visual Build</Link>
         </div>
         <div className="flex flex-col gap-2 text-sm">
-          <p className="meta text-paper/45 mb-1">Organizations</p>
+          <p className="meta text-paper/75 mb-1">Organizations</p>
           <Link href="/sign-up" className="text-paper/75 hover:text-paper">Create an account</Link>
           <Link href="/organization" className="text-paper/75 hover:text-paper">Dashboard</Link>
           <Link href="/billing" className="text-paper/75 hover:text-paper">Billing</Link>
         </div>
       </div>
-      <div className="mx-auto max-w-7xl px-5 pb-8 meta text-paper/35">No statistics on this site are produced by nujli. They are quoted from linked sources.</div>
+      <div className="mx-auto max-w-7xl px-5 pb-8 meta text-paper/75">No statistics on this site are produced by nujli. They are quoted from linked sources.</div>
     </footer>
   );
 }

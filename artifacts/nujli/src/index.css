@@ -264,3 +264,22 @@ input::placeholder, textarea::placeholder { color: #B9B4AA; opacity: 1; }
 /* Readable red for small text on dark surfaces (~6.8:1 on ink); exact #D42A2F kept for fills, glows, outlines, markers. */
 .text-vermilion, .text-destructive { color: #F07A7D; }
 .page-tz { height: 12px; max-width: none; opacity: .7; }
+
+/* Data presentation: reveal (never hides without observer), stacked tables, forced colors */
+.reveal[data-reveal="pending"] { opacity: 0; transform: translateY(12px); }
+.reveal[data-reveal="in"] { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.1,1); }
+@media (prefers-reduced-motion: reduce) { .reveal[data-reveal] { opacity: 1 !important; transform: none !important; } }
+@media (max-width: 640px) {
+  .stack-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .stack-table tr { display: block; padding: .5rem 0; }
+  .stack-table td { display: block; padding: .15rem 0; }
+  .stack-table td[data-label]::before { content: attr(data-label) ": "; font-weight: 600; }
+}
+@media (forced-colors: active) {
+  .forced-bar { background: CanvasText !important; forced-color-adjust: none; }
+  .forced-bar.bar-neg { background: repeating-linear-gradient(45deg, CanvasText 0 3px, Canvas 3px 6px) !important; border: 1px solid CanvasText; }
+  [aria-pressed="true"] { outline: 2px solid Highlight; }
+  .reveal[data-reveal] { opacity: 1 !important; transform: none !important; }
+}
+
+.bar-neg { background-image: repeating-linear-gradient(45deg, transparent 0 4px, rgba(243,236,221,.55) 4px 6px); }

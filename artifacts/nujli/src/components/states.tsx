@@ -61,12 +61,12 @@ export function Empty({ kicker, title, children, action, dark }: { kicker?: stri
 
 export function ClaimLabelBadge({ label }: { label: ClaimLabel }) {
   const styles: Record<string, string> = {
-    'Organization Reported': 'border-ink/30 text-ink bg-paper',
+    'Organization Reported': 'border-ink/70 text-ink bg-paper',
     Corroborated: 'border-ink bg-ink text-paper',
     'Independently Reviewed': 'border-vermilion bg-vermilion text-white',
   };
   return (
-    <span className={cn('inline-flex items-center gap-1.5 border px-2 py-0.5 rounded-sm font-mono text-[0.68rem] tracking-wide uppercase whitespace-nowrap', styles[label] ?? styles['Organization Reported'])} data-testid="badge-claim-label">
+    <span className={cn('inline-flex max-w-full items-center gap-1.5 border px-2 py-0.5 rounded-sm font-mono text-[0.68rem] tracking-wide uppercase whitespace-normal break-words', styles[label] ?? styles['Organization Reported'])} data-testid="badge-claim-label">
       {label}
     </span>
   );

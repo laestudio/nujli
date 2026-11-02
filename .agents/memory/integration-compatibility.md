@@ -2,6 +2,12 @@
 name: Integration compatibility
 description: Non-obvious compatibility lessons for future integration and testing work
 ---
+The development Vite plugin pipeline can reject explicit JSX generic arguments even when TypeScript accepts them.
+
+**Why:** A generic component call rendered a Babel syntax overlay after a clean typecheck.
+
+**How to apply:** Prefer inferred JSX props with guarded callbacks when this happens. Confirm the transformed module serves successfully; typechecking alone does not verify rendering.
+
 Do not assume integration reference examples match the installed Whop SDK: the installed major version may use a different generated client API. Check actual typings or use the documented connector proxy without exposing credentials.
 
 **Why:** The template used older SDK conventions while the installed package used a different API layout.

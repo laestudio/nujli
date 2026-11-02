@@ -9,6 +9,7 @@ import { WorldMap, type MapMarker } from '@/components/world-map';
 import { Block, Empty, ErrorState } from '@/components/states';
 import { cn } from '@/lib/utils';
 import { fmtDate } from '@/lib/format';
+import { fmtAmount, fmtDay, pickHeadline } from '@/lib/financial';
 
 export default function Explore() {
   const [q, setQ] = useState('');
@@ -40,6 +41,7 @@ export default function Explore() {
   const markers = useMemo<MapMarker[]>(() => projects.filter((p) => p.latitude !== null && p.longitude !== null)
     .map((p) => ({ id: p.id, lat: p.latitude as number, lng: p.longitude as number, label: p.title })), [projects]);
   const sel = projects.find((p) => p.id === selected) ?? null;
+  const head = useMemo(() => (sel ? pickHeadline(sel.statistics, !!sel.demonstration) : null), [sel]);
 
   const pick = (id: string, fly = false) => { setSelected(id); if (fly) setFocus(id); };
   const selectCls = 'h-10 rounded-sm border border-paper/20 bg-ink-2 px-3 text-sm text-paper';
@@ -105,20 +107,27 @@ export default function Explore() {
           <WorldMap markers={markers} selectedId={selected} focusId={focus} onSelect={(id) => pick(id)} className="absolute inset-0" />
           {sel && (
             <div className="absolute left-3 right-3 bottom-3 sm:left-auto sm:right-16 sm:w-[360px] rounded-md invert-surface bg-paper-2 border border-ink/15 text-ink p-5 shadow-2xl rise" style={sel.demonstration ? {maxHeight:"calc(100% - 1.5rem)",overflowY:"auto"} : undefined} role="dialog" aria-label={`Preview: ${sel.title}`} data-testid="card-preview">
-              <button type="button" onClick={() => setSelected(null)} aria-label="Close preview" className="absolute right-3 top-3 text-ink/60 hover:text-ink" data-testid="button-close-preview"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setSelected(null)} aria-label="Close preview" className="absolute right-1 top-1 grid h-11 w-11 place-items-center text-ink/80 hover:text-ink" data-testid="button-close-preview"><X className="h-4 w-4" /></button>
               <p className="meta text-vermilion-deep">{sel.cause || 'Cause not stated'}</p>
               <h2 className="mt-2 font-display text-xl font-bold leading-tight pr-6">{sel.title}</h2>
-              <p className="mt-1 text-sm text-ink/70">{sel.organizationName}{sel.locationName ? `, ${sel.locationName}` : ''}</p>
+              <p className="mt-1 text-sm text-ink/80">{sel.organizationName}{sel.locationName ? `, ${sel.locationName}` : ''}</p>
               <DemoNotice demonstration={sel.demonstration} />
+              {head && (
+                <div className="mt-3 rounded-sm border border-ink/20 p-3" data-testid="text-preview-headline">
+                  <p className="text-xs font-semibold">{head.fin ? `${head.fin.label}${head.fin.kind === 'budget' ? '' : ', most recent single entry'}` : (head.stat.label || 'Unlabelled figure')}</p>
+                  <p className="font-display text-2xl font-bold">{head.fin ? fmtAmount(head.fin.amount, head.fin.currency, head.fin.rawAmount) : `${head.stat.value}${head.stat.unit ? ` ${head.stat.unit}` : ''}`}</p>
+                  <p className="text-xs text-ink/80">{head.fin ? (head.fin.kind === 'budget' ? `Plan for ${fmtDay(head.fin.periodStart)} to ${fmtDay(head.fin.periodEnd)}, not spending` : `Transaction date ${fmtDay(head.fin.transactionDate)}. Not a total.`) : (head.stat.asOf ? `As of ${fmtDay(head.stat.asOf.slice(0, 10))}` : 'Date not reported')}</p>
+                </div>
+              )}
               <p className="mt-3 text-sm text-ink/80 line-clamp-3">{sel.overview}</p>
               <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-ink/10 pt-3 text-center">
-                <div><dt className="meta text-ink/50">Stats</dt><dd className="font-display font-bold">{sel.statistics.length}</dd></div>
-                <div><dt className="meta text-ink/50">Updates</dt><dd className="font-display font-bold">{sel.updates.length}</dd></div>
-                <div><dt className="meta text-ink/50">Claims</dt><dd className="font-display font-bold">{sel.claims.length}</dd></div>
+                <div><dt className="meta text-ink/75">Stats</dt><dd className="font-display font-bold">{sel.statistics.length}</dd></div>
+                <div><dt className="meta text-ink/75">Updates</dt><dd className="font-display font-bold">{sel.updates.length}</dd></div>
+                <div><dt className="meta text-ink/75">Claims</dt><dd className="font-display font-bold">{sel.claims.length}</dd></div>
               </dl>
               <div className="mt-4 flex items-center justify-between">
                 <span className="meta text-ink/50">{sel.publishedAt ? `Published ${fmtDate(sel.publishedAt)}` : ''}</span>
-                <Link href={`/projects/${sel.id}`} className="inline-flex items-center gap-1.5 bg-ink text-paper px-3.5 py-2 rounded-sm text-sm font-medium hover:bg-vermilion hover:text-white transition-colors" data-testid="link-open-project">Open page <ArrowRight className="h-4 w-4" /></Link>
+                <Link href={`/projects/${sel.id}`} className="inline-flex min-h-11 items-center gap-1.5 bg-ink text-paper px-3.5 py-2 rounded-sm text-sm font-medium hover:bg-vermilion hover:text-white transition-colors" data-testid="link-open-project">Open page <ArrowRight className="h-4 w-4" /></Link>
               </div>
             </div>
           )}
