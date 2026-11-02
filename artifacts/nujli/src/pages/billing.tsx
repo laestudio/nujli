@@ -7,6 +7,7 @@ import { Journey } from '@/components/journey';
 import { Block, ErrorState, Kicker } from '@/components/states';
 import { fmtDate, money } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { WhopProduct } from '@/components/whop-product';
 
 export default function Billing() {
   const qc = useQueryClient();
@@ -29,7 +30,9 @@ export default function Billing() {
           <Journey current="Pay" className="mb-8" />
           <Kicker className="text-ink/55">Billing</Kicker>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight">Membership</h1>
-          <p className="mt-3 text-ink/70 max-w-md">Price and trial are loaded live from the billing provider. Access is granted only after the server confirms your membership.</p>
+          <p className="mt-3 text-ink/70 max-w-md">View the official Whop product below. Access is granted only after the server confirms your membership.</p>
+
+          <WhopProduct linkedCheckoutReady={p?.checkoutReady === true} />
 
           <div className="keep-dark raised mt-8 rounded-md bg-ink text-paper p-6 md:p-8" data-testid="card-package">
             {pkg.isLoading && <div className="space-y-3"><Block className="h-4 w-24 bg-paper/10" /><Block className="h-10 w-40 bg-paper/10" /><Block className="h-4 w-full bg-paper/10" /></div>}
@@ -51,8 +54,8 @@ export default function Billing() {
                 <p className="mt-4 text-sm text-paper/75" data-testid="text-package-message">{p.message}</p>
                 {(p.status === 'blocked' || !p.checkoutReady) && (
                   <div className="mt-4 rounded-sm border border-vermilion/60 p-3 text-sm" role="alert" data-testid="state-checkout-unavailable">
-                    <p className="inline-flex items-center gap-2 font-medium text-vermilion"><Ban className="h-4 w-4" />Checkout is unavailable right now.</p>
-                    <p className="mt-1 text-paper/70">{p.message || 'The billing provider is not configured.'} No payment can be taken until this is resolved.</p>
+                    <p className="inline-flex items-center gap-2 font-medium text-vermilion"><Ban className="h-4 w-4" />Organization-linked checkout is unavailable.</p>
+                    <p className="mt-1 text-paper/70">{p.message || 'The billing provider is not configured.'} The official Whop page is available above, but direct purchases cannot currently be linked automatically to your organization.</p>
                   </div>
                 )}
                 <div className="mt-6 flex flex-wrap gap-3">
