@@ -14,7 +14,12 @@ The existing project view and organization correction form are extended, not rep
 - The existing citations, independent reviews and evidence labels remain intact. Hotspot confirmation never confers independent-review status.
 - The viewer offers keyboard controls, a list alternative, reduced-motion behavior, an evidence-only option, a persistent map link and mobile bottom-sheet evidence.
 
-## Verification
+## Initial implementation verification (historical)
+
+The following records the initial implementation checks, not a fresh build or
+organization acceptance. The public explorer now contains a separately disclosed
+public-data demonstration, so the original zero-project observation is historical.
+See the public-media verification below for the current browser results.
 
 | Status | Check |
 | --- | --- |
@@ -31,6 +36,34 @@ The existing project view and organization correction form are extended, not rep
 | NOT TESTED | Paid organization journey; separate acceptance scope, not established by this work |
 
 The database tests use clearly labeled SAMPLE drafts, never publish them, and delete their fixtures afterward. Typechecking and a screenshot are not end-to-end acceptance.
+
+## Public-media verification — November 2, 2026 (UTC)
+
+The user requested **“use public data”** instead of supplying organization media.
+Real, explicitly reusable public files were therefore exercised through the actual
+viewer in an isolated browser session. No records were saved, no media was added to
+the Islamic Relief demonstration, and nothing was published.
+
+| Status | Check |
+| --- | --- |
+| PASS | Original Poly Haven panorama loads at 8192 × 4096; source and permission recorded |
+| BLOCKED | Textured 360 rendering and spatial marker interaction: retry confirms native WebGL 2 context creation fails; managed browser launches with `--use-gl=disabled` and exposes no launch-argument control |
+| PASS | Ordinary photo journey, manual navigation, no autoplay, NASA image loading |
+| PASS | Actual Wikimedia WebM video decodes at 640 × 480 and plays to its 1.56-second end |
+| FAIL | Original Wikimedia Ogg cannot decode in the test browser (media error 4), despite HTTP 200; the viewer exposes its error |
+| PASS | Confirmed-flag hotspot list/detail, source, unknown dates, limitations, and exclusion of unconfirmed points; **test inputs, not organization confirmations** |
+| PASS | No-permitted-media mode retains map return and shows no media stage |
+| PASS | Real square image is rejected as a panorama with evidence/source retained |
+| PASS | Controlled video HTTP 503 shows an error without removing source/evidence |
+| PASS | Actual NASA comparison images load with source-documented August 25, 2000 and August 19, 2014 dates and no donation attribution; **display verification only** |
+| PASS | Targeted retry: actual panorama bytes with an explicitly nonmatching cross-origin header trigger Chromium's CORS rejection; source/evidence list retained. Controlled fault injection, not a source outage |
+| BLOCKED | Organization-confirmed hotspots and source-backed project before/after acceptance: public reuse licenses do not establish those confirmations |
+| NOT TESTED | Signed-in correction/save/reconfirmation flow, mobile/screen readers, paid organization journey |
+
+Detailed methods, source permissions, limitations and reproducibility notes:
+[Public-media verification report](PUBLIC_MEDIA_VERIFICATION.md).
+The original organization acceptance remains unresolved; these results must not
+be represented as full real-project acceptance.
 
 ## Operating notes
 

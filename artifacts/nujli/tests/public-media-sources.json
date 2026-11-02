@@ -1,0 +1,57 @@
+{
+  "purpose": "Isolated real-public-media component verification only. Never import into application content, seed the database, or publish as project evidence.",
+  "organizationAcceptance": false,
+  "sources": [
+    {
+      "id": "panorama",
+      "title": "Kloofendal 48d Partly Cloudy",
+      "author": "Greg Zaal / Poly Haven",
+      "sourceUrl": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/kloofendal_48d_partly_cloudy.jpg",
+      "type": "image",
+      "permission": "CC0, explicitly applied by Poly Haven to its assets",
+      "permissionUrl": "https://polyhaven.com/license",
+      "date": null,
+      "limitations": "Photographed environment in South Africa, not Palestinian or humanitarian project evidence. Capture date not established. Use the original full panorama, not the rendered asset thumbnail or edited pure-sky variant."
+    },
+    {
+      "id": "video",
+      "title": "Amaryllis opening",
+      "author": "Amada44",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Amaryllis_opening.ogv",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Amaryllis_opening.ogv",
+      "testedPlaybackDerivativeUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Amaryllis_opening.ogv/Amaryllis_opening.ogv.480p.vp9.webm",
+      "type": "video",
+      "permission": "Copyright holder's worldwide public-domain dedication and unconditional permission where dedication is not possible",
+      "permissionUrl": "https://commons.wikimedia.org/w/index.php?title=File:Amaryllis_opening.ogv&oldid=790241894",
+      "date": null,
+      "limitations": "Real silent flower time-lapse, 1.56 seconds; not humanitarian evidence. The upload date is not a capture date. Browser codec support must be observed, not assumed."
+    },
+    {
+      "id": "before",
+      "title": "Aral Sea, August 25, 2000",
+      "author": "NASA Earth Observatory / Terra MODIS",
+      "sourceUrl": "https://science.nasa.gov/earth/earth-observatory/world-of-change/aral-sea/all-images/",
+      "url": "https://assets.science.nasa.gov/content/dam/science/esd/eo/woc/images/aral/aralsea_tmo_2000238.jpg",
+      "type": "image",
+      "permission": "NASA informational media use guidelines; acknowledge source and do not imply endorsement",
+      "permissionUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "date": "2000-08-25",
+      "dateQuote": "Image of the Aral Sea from August 25, 2000",
+      "limitations": "Satellite observation, not a ground panorama or organization project. No donation attribution. Source's listed dates are used, not dates inferred from filename."
+    },
+    {
+      "id": "after",
+      "title": "Aral Sea, August 19, 2014",
+      "author": "NASA Earth Observatory / Terra MODIS",
+      "sourceUrl": "https://science.nasa.gov/earth/earth-observatory/world-of-change/aral-sea/all-images/",
+      "url": "https://assets.science.nasa.gov/content/dam/science/esd/eo/woc/images/aral/aralsea_tmo_2014231.jpg",
+      "type": "image",
+      "permission": "NASA informational media use guidelines; acknowledge source and do not imply endorsement",
+      "permissionUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "date": "2014-08-19",
+      "dateQuote": "Image of the Aral Sea from August 19, 2014",
+      "limitations": "Same geographic subject as the earlier satellite image. A dated display test is not a confirmed humanitarian before/after claim."
+    }
+  ]
+}

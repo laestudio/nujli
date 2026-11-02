@@ -31,3 +31,15 @@ The local downloaded Chromium runner may fail with missing shared libraries; add
 **Why:** Both errors occurred when attempting local interaction tests.
 
 **How to apply:** Use a supported browser environment; do not report screenshot inspections as interaction tests.
+
+The managed testing browser can explicitly disable graphics and offer no launch-argument control, even when its normal page and video checks work.
+
+**Why:** A targeted capability probe returned no native WebGL2 context and the browser process used `--use-gl=disabled`; unsupported graphics was an environment limitation, not a viewer defect.
+
+**How to apply:** Probe actual WebGL2 support before spherical-render acceptance. If it fails with fixed browser settings, report rendering/marker interaction as blocked and require a graphics-capable browser rather than repeating unchanged tests.
+
+Injected browser responses may normalize missing cross-origin headers.
+
+**Why:** Removing a CORS header did not cause a denial, whereas an explicit mismatched origin produced a genuine browser security rejection.
+
+**How to apply:** Treat CORS fault injection as verified only when the browser's effective response behavior and explicit security diagnostic establish denial; a handler's intended headers or an image error alone are insufficient.

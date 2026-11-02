@@ -14,6 +14,12 @@ Hotspots must reference actual database evidence and be confirmed in organizatio
 
 **How to apply:** Expose source, date, organization, project, evidence status and limitations. Before/after requires dated comparison evidence. Donation-date highlights use publication dates and the wording “Here's what this organization has reported since you last gave.” Do not imply financial attribution without legitimate allocation records. Preserve an always-visible map return, reduced motion, keyboard/list alternatives and mobile bottom-sheet evidence.
 
+The user directed “use public data” for viewer verification when asked for organization-authorized media and permission records.
+
+**Why:** Real, explicitly reusable public files can establish browser behavior without waiting for a participating organization; they cannot establish that organization's spatial or project claims.
+
+**How to apply:** Verify reuse terms at the original source, retain credits and dates, and keep unrelated public media isolated from donor projects. Report public-media rendering separately from organization-confirmed hotspots and end-to-end project acceptance.
+
 Republishing unchanged evidence must not count it as newly reported. Unknown historical publication dates must stay unknown rather than being inferred from event dates or the latest page publication.
 
 **Why:** Otherwise routine draft edits or republishing would falsely imply new reporting since a donor's gift.
