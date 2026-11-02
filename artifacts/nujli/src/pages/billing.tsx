@@ -1,7 +1,7 @@
 import { Link } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpRight, BadgeCheck, Ban, RefreshCw } from 'lucide-react';
-import { useCreateCheckout, useGetBillingPackage, useVerifyMembership, getGetMeQueryKey } from '@workspace/api-client-react';
+import { useCreateCheckout, useGetBillingPackage, useVerifyMembership, useSetDeveloperAccess, getGetMeQueryKey } from '@workspace/api-client-react';
 import { Page, useMe } from '@/components/shell';
 import { Journey } from '@/components/journey';
 import { Block, ErrorState, Kicker } from '@/components/states';
@@ -19,6 +19,7 @@ export default function Billing() {
     },
   });
   const verify = useVerifyMembership({ mutation: { onSuccess: () => qc.invalidateQueries({ queryKey: getGetMeQueryKey() }) } });
+  const developer = useSetDeveloperAccess({ mutation: { onSuccess: () => qc.invalidateQueries({ queryKey: getGetMeQueryKey() }) } });
   const p = pkg.data;
   const ent = verify.data ?? me.data?.entitlement;
   const badUrl = checkout.isSuccess && !(checkout.data?.url && /^https?:\/\//.test(checkout.data.url));
@@ -78,6 +79,18 @@ export default function Billing() {
         </div>
 
         <div className="space-y-5">
+          {me.data?.developerEligible && <section className="rounded-md border border-ink/25 p-6" aria-label="Developer access">
+            <h2 className="font-display text-xl">Developer access</h2>
+            <p className="mt-2 text-sm text-ink/80">Use the generator, private previews, review and publishing without paying in this development instance. This is not a verified purchase and does not grant independent-review privileges.</p>
+            {!me.data.organizationId ? <Link href="/organization" className="mt-4 inline-flex min-h-11 items-center underline">Set up your organization first</Link> :
+              <button type="button" disabled={developer.isPending} onClick={() => developer.mutate({data:{enabled:ent?.status !== 'developer'}})}
+                className="mt-4 inline-flex min-h-11 items-center rounded-sm border border-vermilion px-5 font-medium disabled:opacity-50" data-testid="button-developer-access">
+                {developer.isPending ? 'Updating access…' : ent?.status === 'developer' ? 'Turn off developer access' : 'Enable developer access'}
+              </button>}
+            {ent?.status === 'developer' && <div className="mt-3 flex flex-wrap gap-4"><Link href="/organization" className="inline-flex min-h-11 items-center underline">My Projects</Link><Link href="/organization/new" className="inline-flex min-h-11 items-center underline">Open Generator</Link></div>}
+            {developer.isError && <div className="mt-3"><ErrorState error={developer.error} title="Developer access could not be changed." /></div>}
+            {developer.isSuccess && <p role="status" className="mt-3 text-sm">{developer.data.message}</p>}
+          </section>}
           <div className="rounded-md border border-ink/15 p-6" data-testid="card-entitlement">
             <p className="meta text-ink/55">Your access</p>
             {!me.isSignedIn ? <p className="mt-3 text-sm">Sign in to see your membership.</p> : me.isLoading ? <Block className="mt-3 h-12" /> : me.isError ? <div className="mt-3"><ErrorState error={me.error} onRetry={() => me.refetch()} /></div> : ent && (

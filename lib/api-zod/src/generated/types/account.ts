@@ -19,4 +19,5 @@ export interface Account {
   website?: string | null;
   entitlement: Entitlement;
   aiConfigured: boolean;
+  developerEligible?: boolean;
 }

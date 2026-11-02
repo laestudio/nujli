@@ -340,6 +340,18 @@ export const VerifyMembershipResponse = zod.object({
 })
 
 
+export const SetDeveloperAccessBody = zod.object({
+  "enabled": zod.boolean()
+})
+
+export const SetDeveloperAccessResponse = zod.object({
+  "active": zod.boolean(),
+  "status": zod.string(),
+  "message": zod.string(),
+  "expiresAt": zod.string().nullish()
+})
+
+
 export const GetMeResponse = zod.object({
   "userId": zod.string(),
   "role": zod.enum(['organization', 'reviewer']),
@@ -352,7 +364,8 @@ export const GetMeResponse = zod.object({
   "message": zod.string(),
   "expiresAt": zod.string().nullish()
 }),
-  "aiConfigured": zod.boolean()
+  "aiConfigured": zod.boolean(),
+  "developerEligible": zod.boolean().optional()
 })
 
 
@@ -380,7 +393,8 @@ export const SaveOrganizationResponse = zod.object({
   "message": zod.string(),
   "expiresAt": zod.string().nullish()
 }),
-  "aiConfigured": zod.boolean()
+  "aiConfigured": zod.boolean(),
+  "developerEligible": zod.boolean().optional()
 })
 
 

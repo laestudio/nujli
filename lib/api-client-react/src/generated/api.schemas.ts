@@ -36,6 +36,10 @@ export interface ApprovalInput {
   privacyConfirmed: boolean;
 }
 
+export interface DeveloperAccessToggle {
+  enabled: boolean;
+}
+
 export interface Entitlement {
   active: boolean;
   status: string;
@@ -63,6 +67,7 @@ export interface Account {
   website?: string | null;
   entitlement: Entitlement;
   aiConfigured: boolean;
+  developerEligible?: boolean;
 }
 
 export type PackageStatus = typeof PackageStatus[keyof typeof PackageStatus];

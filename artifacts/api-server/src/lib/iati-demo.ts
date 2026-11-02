@@ -34,14 +34,14 @@ export function extractIatiDemo(xml: string) {
     const unit = v.attr("currency") ?? currencyDefault ?? "";
     const date = entry.children("transaction-date").attr("iso-date") ?? v.attr("value-date") ?? "";
     const quote = $.xml(el);
-    const label = el.tagName === "budget" ? "budget" : (entry.attr("ref") ?? "transaction").trim();
+    const label = (entry.attr("ref") ?? "transaction").trim();
     if (!/^-?\d+(\.\d+)?$/.test(value) || !/^[A-Z]{3}$/.test(unit) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Financial record lacks a valid amount, currency, or reporting date.");
     // Requiring explicit currency in the quote avoids disguising inherited metadata as a quotation.
     if (!v.attr("currency")) throw new Error("Inherited currency requires manual review.");
     const id = randomUUID();
     claims.push({ id, text: quote, quote, sourceUrl: IATI_DATASET, label: "Organization Reported", reviews: [] });
     statistics.push({ id: randomUUID(), label, value, unit, asOf: date, claimId: id, quote, sourceUrl: IATI_DATASET });
-    updates.push({ id: randomUUID(), title: el.tagName === "budget" ? "Reported budget (not spending or delivered impact)" : label, date, body: quote, quote, sourceUrl: IATI_DATASET });
+    updates.push({ id: randomUUID(), title: label, date, body: quote, quote, sourceUrl: IATI_DATASET });
   });
   if (!statistics.length) throw new Error("No dated financial evidence found.");
   if (activity.children("result").length) throw new Error("New result indicators require review before updating this demonstration.");

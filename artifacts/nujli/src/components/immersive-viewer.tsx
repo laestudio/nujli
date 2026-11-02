@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ClaimLabelBadge } from '@/components/states';
 import { cn } from '@/lib/utils';
+import { MediaContextNote, MediaVideo } from '@/components/media-video';
 import { fmtDate, hostOf } from '@/lib/format';
 
 type Detail = { hotspot: ImmersiveHotspot; scene: ImmersiveScene | null };
@@ -117,6 +118,7 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
   const mode: 'A' | 'B' | 'C' = panoScenes.length ? 'A' : approved.length ? 'B' : 'C';
   const [idx, setIdx] = useState(0);
   const [detail, setDetail] = useState<Detail | null>(null);
+  const detailOpener = useRef<HTMLElement | null>(null);
   const [failedMedia, setFailedMedia] = useState<string | null>(null);
 
   const items: Media[] = mode === 'A' ? panoScenes.map((s) => mediaById.get(s.mediaId)!) : approved;
@@ -137,7 +139,7 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
     return (
       <section aria-label="Project viewer" className="keep-dark bg-ink text-paper border-b border-paper/10" data-testid="viewer-evidence-mode">
         <div className="mx-auto max-w-6xl px-5 py-6 flex flex-wrap items-center gap-4">
-          <Link href={mapHref} className="btn-outline h-9 px-3 text-sm" data-testid="link-viewer-back-map"><ArrowLeft className="h-4 w-4" />Back to map</Link>
+          <Link href={mapHref} className="btn-outline min-h-11 px-3 text-sm" data-testid="link-viewer-back-map"><ArrowLeft className="h-4 w-4" />Back to map</Link>
           <p className="text-sm text-paper/70">No permitted media for this view. The documented evidence is listed below.</p>
         </div>
       </section>
@@ -151,7 +153,7 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
   return (
     <section aria-label={mode === 'A' ? '360 evidence viewer' : 'Photo journey'} className="keep-dark bg-ink text-paper border-b border-paper/10" data-testid={`viewer-mode-${mode}`}>
       <div className="mx-auto max-w-6xl px-5 pt-5 pb-3 flex flex-wrap items-center gap-3">
-        <Link href={mapHref} className="btn-outline h-9 px-3 text-sm" data-testid="link-viewer-back-map"><ArrowLeft className="h-4 w-4" />Back to map</Link>
+        <Link href={mapHref} className="btn-outline min-h-11 px-3 text-sm" data-testid="link-viewer-back-map"><ArrowLeft className="h-4 w-4" />Back to map</Link>
         <span className="meta inline-flex items-center gap-1.5 text-paper/80" data-testid="text-viewer-mode">
           {mode === 'A' ? <><Compass className="h-3.5 w-3.5 text-vermilion" />360 panorama, confirmed by organization</> : <><Images className="h-3.5 w-3.5 text-vermilion" />Photo journey / ordinary media</>}
         </span>
@@ -181,18 +183,24 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
                 ))}
               </div>
             ) : (
-              <video key={current.id} src={current.url} controls preload="metadata" onError={() => setFailedMedia(current.id)} className="max-h-[68vh] w-full" data-testid={`video-journey-${current.id}`}>Your browser cannot play this video.</video>
+              <MediaVideo key={current.id} url={current.url} sourceUrl={current.sourceUrl} title={current.caption || 'Project video'} dark className="w-full max-w-4xl" testId={`video-journey-${current.id}`} />
             )}
-            {failedMedia === current.id && <p role="alert" className="p-4 text-sm">This media could not be loaded. Its source and evidence list remain available.</p>}
+            {failedMedia === current.id && <p role="alert" className="absolute inset-x-0 bottom-0 bg-ink/90 p-4 text-sm">This media could not be loaded. Its source and evidence list remain available.</p>}
           </div>
         )}
 
         <div className="flex flex-wrap items-center gap-3 py-3 text-sm">
-          <button type="button" onClick={() => go(-1)} disabled={items.length < 2} className="btn-outline h-9 px-3 text-sm" aria-label="Previous item" data-testid="button-viewer-prev"><ChevronLeft className="h-4 w-4" />Previous</button>
-          <button type="button" onClick={() => go(1)} disabled={items.length < 2} className="btn-outline h-9 px-3 text-sm" aria-label="Next item" data-testid="button-viewer-next">Next<ChevronRight className="h-4 w-4" /></button>
-          <div className="min-w-0 flex-1 text-paper/80">
-            <span>{current?.caption || 'Untitled'}</span>
-            <span className="meta ml-3 text-paper/50">{scene?.date ? `Recorded ${fmtDate(scene.date)}` : 'Undated'}</span>
+          <button type="button" onClick={() => go(-1)} disabled={items.length < 2} className="btn-outline min-h-11 px-4 text-sm" aria-label="Previous item" data-testid="button-viewer-prev"><ChevronLeft className="h-4 w-4" />Previous</button>
+          <button type="button" onClick={() => go(1)} disabled={items.length < 2} className="btn-outline min-h-11 px-4 text-sm" aria-label="Next item" data-testid="button-viewer-next">Next<ChevronRight className="h-4 w-4" /></button>
+          <div className="min-w-0 basis-full sm:basis-auto flex-1 text-paper/80 [overflow-wrap:anywhere]">
+            <span className="line-clamp-2">{current?.caption || 'Untitled'}</span>
+            <span className="meta text-paper/50">{project.organizationName} · {scene?.date ? `Recorded ${fmtDate(scene.date)}` : 'Undated'}{mode === 'B' ? ' · not 360' : ''}</span>
+            {current && (
+              <details className="mt-1" data-testid="details-viewer-context">
+                <summary className="inline-flex min-h-11 cursor-pointer items-center text-xs font-medium underline underline-offset-4">Context and source</summary>
+                <div className="pb-2"><MediaContextNote caption={current.caption} permission={current.permissionStatus} dark /><p className="mt-1 text-xs text-paper/60">White and silver rings mark confirmed evidence points; each opens its source and limitations.</p></div>
+              </details>
+            )}
           </div>
           {current && <SrcLink url={current.sourceUrl} />}
         </div>
@@ -202,7 +210,7 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
           {hs.length === 0 ? <p className="mt-2 text-sm text-paper/60">No confirmed evidence points on this item.</p> : (
             <ul className="mt-2 grid gap-1 sm:grid-cols-2">
               {hs.map((h) => (
-                <li key={h.id}><button type="button" onClick={() => setDetail({ hotspot: h, scene: scene ?? null })} className="w-full text-left text-sm py-1.5 px-2 rounded-sm hover:bg-paper/10 inline-flex items-center gap-2" data-testid={`button-hotspot-list-${h.id}`}><span className="nj-hs nj-hs-sm shrink-0" aria-hidden />{labelOf(h)}</button></li>
+                <li key={h.id}><button type="button" onClick={() => setDetail({ hotspot: h, scene: scene ?? null })} className="w-full min-h-11 text-left text-sm py-1.5 px-2 rounded-sm hover:bg-paper/10 inline-flex items-center gap-2" data-testid={`button-hotspot-list-${h.id}`}><span className="nj-hs nj-hs-sm shrink-0" aria-hidden />{labelOf(h)}</button></li>
               ))}
             </ul>
           )}
@@ -238,7 +246,16 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
       </div>
 
       <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
-        <SheetContent side={isMobile ? 'bottom' : 'right'} className={cn('keep-dark bg-ink text-paper border-paper/15 overflow-y-auto', isMobile && 'max-h-[85dvh] rounded-t-md')} data-testid="sheet-hotspot-detail">
+        <SheetContent side={isMobile ? 'bottom' : 'right'} className={cn('keep-dark bg-ink text-paper border-paper/15 overflow-y-auto', isMobile && 'max-h-[85dvh] rounded-t-md')} data-testid="sheet-hotspot-detail"
+          onOpenAutoFocus={() => {
+            const active = document.activeElement;
+            detailOpener.current = active instanceof HTMLElement && active !== document.body ? active : null;
+          }}
+          onCloseAutoFocus={(event) => {
+            const opener = detailOpener.current;
+            if (opener?.isConnected) { event.preventDefault(); opener.focus(); }
+            detailOpener.current = null;
+          }}>
           <SheetTitle className="font-display text-xl text-paper">{detail?.hotspot.kind === 'claim' ? 'Documented claim' : 'Documented media'}</SheetTitle>
           <SheetDescription className="text-paper/60 text-sm">{project.organizationName} / {project.title || 'Untitled project'}</SheetDescription>
           {detail && (
@@ -263,8 +280,9 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
               {mediaDetail && (
                 <>
                   <span className="meta border border-paper/30 px-2 py-0.5 rounded-sm">Organization Reported</span>
-                  {mediaDetail.type === 'image' ? <img src={mediaDetail.url} alt={mediaDetail.caption || 'Media'} className="w-full" /> : <video src={mediaDetail.url} controls preload="metadata" className="w-full" />}
+                  {mediaDetail.type === 'image' ? <img src={mediaDetail.url} alt={mediaDetail.caption || 'Media'} className="w-full" /> : <MediaVideo url={mediaDetail.url} sourceUrl={mediaDetail.sourceUrl} title={mediaDetail.caption || 'Media'} dark />}
                   <p>{mediaDetail.caption || 'No caption.'}</p>
+                  <MediaContextNote caption={mediaDetail.caption} permission={mediaDetail.permissionStatus} dark />
                   <p className="meta text-paper/55">{mediaDetailScene?.date ? `Recorded ${fmtDate(mediaDetailScene.date)}` : 'Date: undated'}</p>
                   <p className="meta text-paper/55">First published: {mediaDetail.publishedAt ? fmtDate(mediaDetail.publishedAt) : 'unknown'}</p>
                   {mediaDetailScene?.date && <p className="text-xs italic text-paper/60">"{mediaDetailScene.dateQuote}"</p>}
@@ -272,7 +290,7 @@ export function ImmersiveViewer({ project, media, claims, mapHref = '/explore' }
                 </>
               )}
               <div className="border-t border-paper/10 pt-3"><p className="meta text-paper/50">Limitations</p><p className="mt-1 text-paper/80">{detail.hotspot.limitations}</p></div>
-              <button type="button" onClick={() => setDetail(null)} className="btn-outline h-9 px-3 text-sm" data-testid="button-close-detail"><ArrowRight className="h-4 w-4" />Back to viewer</button>
+              <button type="button" onClick={() => setDetail(null)} className="btn-outline min-h-11 px-3 text-sm" data-testid="button-close-detail"><ArrowRight className="h-4 w-4" />Back to viewer</button>
             </div>
           )}
         </SheetContent>

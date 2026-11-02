@@ -80,6 +80,20 @@ paths:
           content:
             application/json:
               schema: {$ref: "#/components/schemas/Entitlement"}
+  /billing/developer-access:
+    post:
+      operationId: setDeveloperAccess
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/DeveloperAccessToggle"}
+      responses:
+        "200":
+          description: Development-only access updated; not a purchase
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Entitlement"}
   /me:
     get:
       operationId: getMe
@@ -292,6 +306,11 @@ components:
         accuracyConfirmed: {type: boolean}
         permissionsConfirmed: {type: boolean}
         privacyConfirmed: {type: boolean}
+    DeveloperAccessToggle:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: {type: boolean}
     Entitlement:
       type: object
       required: [active, status, message]
@@ -311,6 +330,7 @@ components:
         website: {type: [string, "null"]}
         entitlement: {$ref: "#/components/schemas/Entitlement"}
         aiConfigured: {type: boolean}
+        developerEligible: {type: boolean}
     Package:
       type: object
       required: [status, name, message, checkoutReady]

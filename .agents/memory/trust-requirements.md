@@ -10,6 +10,18 @@ Never invent humanitarian projects, statistics, photos, videos, testimonials, pa
 
 **How to apply:** Final acceptance reports use PASS, FAIL, BLOCKED, NOT TESTED. Live Whop payment acceptance remains blocked until a purchase and entitlement check have actually run. Preserve the existing Whop product; never silently replace it or hardcode its price.
 
+The owner may use an explicitly granted developer-access button to access organization tools without paying in development. This is not a purchase or a verified membership.
+
+**Why:** The user requested personal developer access to the inner organization experience without payment.
+
+**How to apply:** Require the signed-in, server-authorized development account, visibly label developer status, leave ordinary users' Whop gates intact, disable this privilege in production, and do not extend independent-review permissions.
+
+Do not add the “Just browsing” donor shortcut to the landing page.
+
+**Why:** The user explicitly requested its removal; their immediate need was access to the organization side.
+
+**How to apply:** Preserve the existing “Show the Evidence” role selection and provide the owner a direct organization-workspace link when they ask for organization access.
+
 Funding simulation must remain distinct from documented construction. AI extraction is not independent review. Evidence labels are exactly Organization Reported, Corroborated, Independently Reviewed.
 
 **Why:** Donors must not confuse simulated funding, organization assertions or AI checks with real construction or independent verification.

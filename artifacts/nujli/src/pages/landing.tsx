@@ -31,7 +31,7 @@ export default function Landing() {
           <Link href="/choose" data-testid="button-show-evidence" className="btn-outline pointer-events-auto text-lg px-8 py-4 rise" style={{ animationDelay: '180ms' }}>
             Show the Evidence <ArrowRight className="h-5 w-5" />
           </Link>
-          <Link href="/about" className="pointer-events-auto text-sm text-paper/70 underline underline-offset-4 hover:text-paper" data-testid="link-our-mission">Our mission</Link>
+          <Link href="/about" className="pointer-events-auto inline-flex min-h-11 items-center text-sm text-paper/70 underline underline-offset-4 hover:text-paper" data-testid="link-our-mission">Our mission</Link>
           <dl className="mt-6 grid grid-cols-3 gap-6 sm:gap-10 border-t border-paper/15 pt-5 rise" style={{ animationDelay: '260ms' }}>
             <div><dt className="meta text-paper/50">Projects</dt><dd className="mt-1 font-display text-2xl font-bold text-paper" data-testid="text-count-projects">{count(summary.data?.projects)}</dd></div>
             <div><dt className="meta text-paper/50">Organizations</dt><dd className="mt-1 font-display text-2xl font-bold text-paper" data-testid="text-count-organizations">{count(summary.data?.organizations)}</dd></div>

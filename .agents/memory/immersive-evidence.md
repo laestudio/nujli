@@ -25,3 +25,9 @@ Keep reported-entry-date exploration separate from the donation-date filter.
 **Why:** Financial evidence may need transaction/as-of date exploration, but those dates do not establish when donors could first see a report.
 
 **How to apply:** Label the two filters separately and compose them when both are set. Preserve public-data demonstration disclosures and financial classifications alongside the immersive viewer.
+
+Donor-side photographs, video and immersive exploration are the user's highest product priority. Continue using public data; urgency does not waive media permissions or evidence relevance.
+
+**Why:** The user explicitly emphasized this priority and answered “use public data” when asked for authorized uploads.
+
+**How to apply:** Distinguish official historical contextual reporting from evidence of a particular IATI activity. Never use unrelated geographic photos to fill an empty project gallery. Keep those limitations visible.

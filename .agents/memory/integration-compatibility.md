@@ -8,6 +8,12 @@ The development Vite plugin pipeline can reject explicit JSX generic arguments e
 
 **How to apply:** Prefer inferred JSX props with guarded callbacks when this happens. Confirm the transformed module serves successfully; typechecking alone does not verify rendering.
 
+YouTube can serve a bot-confirmation challenge inside the test browser even when official oEmbed metadata and the official publisher embed are available.
+
+**Why:** An iframe loading successfully did not establish actual video playback.
+
+**How to apply:** Test playback separately from embed rendering, retain a direct provider link, and report provider-blocked playback honestly rather than changing security settings or rehosting media.
+
 Do not assume integration reference examples match the installed Whop SDK: the installed major version may use a different generated client API. Check actual typings or use the documented connector proxy without exposing credentials.
 
 **Why:** The template used older SDK conventions while the installed package used a different API layout.

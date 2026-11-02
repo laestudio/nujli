@@ -12,22 +12,13 @@ import { FundingChart, ModeSwitch } from '@/components/funding-chart';
 import { KIND_EXPLAIN, KIND_LABEL, decodeFinancial, entryDate, fmtAmount, fmtDay, type FinancialEntry, type FinancialKind } from '@/lib/financial';
 import { ImmersiveViewer } from '@/components/immersive-viewer';
 import { Link } from 'wouter';
+import { MediaContextNote, MediaVideo } from '@/components/media-video';
 
 const SINCE_KEY = 'nujli:last-donation';
 function readSince(): string { try { return localStorage.getItem(SINCE_KEY) ?? ''; } catch { return ''; } }
 function writeSince(v: string) { try { if (v) localStorage.setItem(SINCE_KEY, v); else localStorage.removeItem(SINCE_KEY); } catch { /* storage unavailable */ } }
 const pubOf = (r: { publishedAt?: string | null }): string | null => isoDay(r.publishedAt ?? null);
 type StatMode = 'cards' | 'table' | 'text';
-
-function embedUrl(url: string): string | null {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes('youtube.com')) { const v = u.searchParams.get('v'); return v ? `https://www.youtube-nocookie.com/embed/${v}` : null; }
-    if (u.hostname === 'youtu.be') return `https://www.youtube-nocookie.com/embed${u.pathname}`;
-    if (u.hostname.includes('vimeo.com')) { const id = u.pathname.split('/').filter(Boolean).pop(); return id ? `https://player.vimeo.com/video/${id}` : null; }
-  } catch { return null; }
-  return null;
-}
 
 /** Subtle reveal: content stays visible unless IntersectionObserver exists and motion is allowed. */
 function Reveal({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -237,37 +228,53 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
   return (
     <article className="text-ink [overflow-wrap:anywhere] min-w-0 max-w-full" data-testid={`view-project-${project.id}`}>
       <header className="keep-dark relative overflow-hidden bg-ink-2 text-paper border-b border-paper/10">
-        <div className="absolute inset-0 opacity-[0.07]" aria-hidden style={{ backgroundImage: 'radial-gradient(#F3ECDD 1px, transparent 1px)', backgroundSize: '14px 14px' }} />
-        <div className="relative mx-auto max-w-6xl px-5 pt-14 pb-12">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="relative mx-auto max-w-6xl px-5 pt-6 pb-5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             {project.cause && <span className="meta text-vermilion">{project.cause}</span>}
             {preview && <StatusPill status={project.status} />}
             {project.isSample && <span className="meta border border-paper/40 px-2 py-0.5 rounded-sm">Sample record</span>}
           </div>
-          <h1 className="mt-4 font-display text-4xl md:text-6xl font-bold leading-[0.98] tracking-tight max-w-4xl" data-testid="text-project-title">{project.title || 'Untitled project'}</h1>
-          <DemoNotice demonstration={project.demonstration} />
-          {project.demonstration && <p className="text-sm text-paper/85 max-w-3xl">Traditional Evidence View · IATI activity {project.demonstration.activityId} · Source updated {fmtDate(project.demonstration.sourceUpdatedAt)}. No reported result indicators are attached; financial transactions are not evidence of delivered outcomes.</p>}
-          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm text-paper/85">
+          <h1 className="mt-2 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight max-w-4xl" data-testid="text-project-title">{project.title || 'Untitled project'}</h1>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-paper/85">
             <span data-testid="text-organization">{project.organizationName}</span>
             {project.locationName && <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-vermilion" aria-hidden />{project.locationName}</span>}
-            {project.publishedAt && <span className="meta self-center">Published {fmtDate(project.publishedAt)}</span>}
-            <span className="meta self-center">Updated {fmtDate(project.updatedAt)}</span>
+            {project.demonstration && <span className="meta self-center" data-testid="text-source-updated">Source updated {fmtDate(project.demonstration.sourceUpdatedAt)}</span>}
+            <span className="inline-flex items-center gap-1">Original source: <SourceLink url={project.sourceUrl} dark /></span>
           </div>
-          <div className="mt-3 text-paper/85 text-sm">Original public page: <SourceLink url={project.sourceUrl} dark /></div>
+          <DemoNotice demonstration={project.demonstration} />
+          <details className="group mt-1 text-sm text-paper/85" data-testid="details-project-info">
+            <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 font-medium underline underline-offset-4">More record details<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden /></summary>
+            <div className="mt-2 space-y-1 max-w-3xl">
+              {project.demonstration && <p>Public IATI evidence · Activity {project.demonstration.activityId}. No reported result indicators are attached; financial transactions are not evidence of delivered outcomes.</p>}
+              {project.publishedAt && <p className="meta">Published {fmtDate(project.publishedAt)}</p>}
+              <p className="meta">Updated {fmtDate(project.updatedAt)}</p>
+            </div>
+          </details>
+          <nav aria-label="Jump to" className="mt-2 flex flex-wrap gap-x-4 text-sm">
+            {!evidenceOnly && <a href="#viewer" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-media">Media</a>}
+            <a href="#evidence" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-evidence">Evidence</a>
+            <a href="#timeline" className="inline-flex min-h-11 items-center underline underline-offset-4" data-testid="link-jump-updates">Updates</a>
+          </nav>
         </div>
       </header>
 
-      <div className="sticky top-[var(--app-header-height,64px)] z-30 border-b border-ink/15 bg-paper/95 backdrop-blur">
+      {!evidenceOnly && <div id="viewer" tabIndex={-1} className="scroll-mt-40"><ImmersiveViewer project={project} media={visibleMedia} claims={claims} /></div>}
+
+      <div className="border-b border-ink/15 bg-paper">
         <div className="mx-auto max-w-6xl px-5 py-2 flex flex-wrap items-center gap-x-3 gap-y-1">
           <Link href="/explore" className="min-h-11 inline-flex items-center text-sm underline">Back to map</Link>
-          <CalendarClock className="h-4 w-4 text-vermilion-deep" aria-hidden />
+          <details className="group w-full sm:w-auto" open={!!since || !!reportedSince} data-testid="details-since">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-medium"><CalendarClock className="h-4 w-4 text-vermilion-deep" aria-hidden />{since ? `Since your last donation: ${fmtDay(since)}` : 'Filter by your last donation date (optional)'}</summary>
+          <div className="flex flex-wrap items-center gap-2 pb-2">
           <label htmlFor="since" className="text-sm font-medium">Since your last donation</label>
           <input id="since" type="date" value={since} onChange={(e) => setSince(e.target.value)} aria-describedby="since-help" className="min-h-11 w-full max-w-[13rem] min-w-0 rounded-md border border-ink/40 bg-paper px-2 font-mono text-sm" data-testid="input-since-date" />
+          {isDemo && <label className="text-sm">Reported entry date from <input type="date" value={reportedSince} onChange={e => setReportedSince(e.target.value)} className="min-h-11 rounded-md border border-ink/40 bg-paper px-2 font-mono text-sm" data-testid="input-reported-date" /></label>}
+          </div>
+          </details>
           {(since || reportedSince) && (
             <button type="button" onClick={() => { setSince(''); setReportedSince(''); }} className="inline-flex min-h-11 items-center gap-1 text-sm underline underline-offset-2" data-testid="button-clear-since"><X className="h-4 w-4" aria-hidden />Show everything</button>
           )}
           <button type="button" aria-pressed={evidenceOnly} onClick={() => setEvidenceOnly(!evidenceOnly)} className="min-h-11 px-3 rounded-sm border border-ink/25 text-sm" data-testid="button-evidence-only">Evidence only</button>
-          {isDemo && <label className="text-sm">Reported entry date from <input type="date" value={reportedSince} onChange={e => setReportedSince(e.target.value)} className="min-h-11 rounded-md border border-ink/40 bg-paper px-2 font-mono text-sm" data-testid="input-reported-date" /></label>}
           <button type="button" onClick={() => setHelpOpen((o) => !o)} aria-expanded={helpOpen} aria-controls="help-panel" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium sm:ml-auto" data-testid="button-help"><CircleHelp className="h-4 w-4" aria-hidden />How to read this page</button>
           <p id="since-help" className="text-xs text-ink/75 w-full" aria-live="polite" data-testid="text-since-summary">
             {since ? `Filtering by each record's first publication on nujli., not event or transaction dates. ${filteredUpdates.length} timeline entries and ${shownRows.length} figures match. Unknown publication dates are excluded.` : 'Showing the full publication history. Pick your last donation date to see records first published since then.'}
@@ -275,12 +282,11 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
           </p>
           {since && <p className="text-xs text-ink/75">Counts use the filtered records shown below. This does not show what your donation paid for.</p>}
         </div>
-        <nav aria-label="Project sections" className="mx-auto max-w-6xl px-5 flex gap-1 overflow-x-auto text-sm">
-          {[['story', 'Story'], ...(keyMode === 'cards' && nextCards.length ? [['next', 'Next']] : []), ['timeline', 'Timeline'], ...(rows.some((r) => r.fin) ? [['funding', 'Funding']] : []), ['statistics', 'Figures'], ['gallery', 'Photos'], ['video', 'Video'], ['evidence', 'Evidence']].map(([s, l]) => <a key={s} href={`#${s}`} className="inline-flex min-h-11 items-center px-2 whitespace-nowrap text-ink/80 hover:text-ink underline-offset-4 hover:underline">{l}</a>)}
+        <nav aria-label="Project sections" className="mx-auto max-w-6xl px-5 flex flex-wrap gap-x-1 text-sm">
+          {[['story', 'Story'], ...(keyMode === 'cards' && nextCards.length ? [['next', 'Next']] : []), ['timeline', 'Timeline'], ...(rows.some((r) => r.fin) ? [['funding', 'Funding']] : []), ['statistics', 'Figures'], ...(images.length ? [['gallery', 'Photos']] : []), ...(videos.length ? [['video', 'Video']] : []), ['evidence', 'Evidence']].map(([s, l]) => <a key={s} href={`#${s}`} className="inline-flex min-h-11 items-center px-2 whitespace-nowrap text-ink/80 hover:text-ink underline-offset-4 hover:underline">{l}</a>)}
         </nav>
       </div>
 
-      {!evidenceOnly && <ImmersiveViewer project={project} media={visibleMedia} claims={claims} />}
 
       <div className="mx-auto max-w-6xl px-5" id="project-main">
         {since && (
@@ -569,14 +575,10 @@ export function ProjectView({ project, preview = false }: { project: Project; pr
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
               {videos.map((v) => {
-                const em = embedUrl(v.url);
                 return (
                   <figure key={v.id}>
-                    <div className="aspect-video bg-ink rounded-sm overflow-hidden">
-                      {em ? <iframe src={em} title={v.caption || 'Project video'} className="h-full w-full" allow="encrypted-media; picture-in-picture" allowFullScreen />
-                        : <video src={v.url} controls preload="metadata" className="h-full w-full" data-testid={`video-${v.id}`}>Your browser cannot play this video.</video>}
-                    </div>
-                    <figcaption className="mt-2 flex flex-wrap justify-between gap-2 text-sm"><span>{v.caption}</span><SourceLink url={v.sourceUrl} /></figcaption>
+                    <MediaVideo url={v.url} sourceUrl={v.sourceUrl} title={v.caption || 'Project video'} testId={`video-${v.id}`} />
+                    <figcaption className="mt-2 space-y-1 text-sm"><span className="flex flex-wrap justify-between gap-2"><span>{v.caption}</span><SourceLink url={v.sourceUrl} /></span><MediaContextNote caption={v.caption} permission={v.permissionStatus} /></figcaption>
                   </figure>
                 );
               })}

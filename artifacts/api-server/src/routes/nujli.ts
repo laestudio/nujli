@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { clerkClient } from "@clerk/express";
 import { pool } from "@workspace/db";
 import * as schemas from "@workspace/api-zod";
 import { identity, organizationIdentity } from "../lib/auth";
@@ -33,10 +34,20 @@ router.post("/billing/checkout",async(req,res)=>{
   res.json(await checkout(who.organization.id,origin));
 });
 router.post("/billing/verify",async(req,res)=>{const who=await organizationIdentity(req);res.json(await entitlement(who.organization.id));});
+router.post("/billing/developer-access",async(req,res)=>{
+  const who=await organizationIdentity(req);
+  requireCondition(who.developerEligible,403,"Developer access is restricted to the authorized development account.");
+  const origin=req.get("origin");
+  requireCondition(origin && new URL(origin).host === req.get("host"),403,"Use Developer access from this application.");
+  requireCondition(typeof req.body.enabled === "boolean",400,"Choose whether to enable developer access.");
+  await clerkClient.users.updateUserMetadata(who.userId,{publicMetadata:{developerAccessEnabled:req.body.enabled}});
+  await pool.query("INSERT INTO audit_events(actor_id,action,resource_id,details) VALUES($1,$2,$3,$4)",[who.userId,req.body.enabled?"developer-access.enabled":"developer-access.disabled",who.organization.id,JSON.stringify({developmentOnly:true,paymentVerified:false})]);
+  res.json(await entitlement(who.organization.id));
+});
 async function account(who:Awaited<ReturnType<typeof identity>>){
   return schemas.GetMeResponse.parse({userId:who.userId,role:who.role,organizationId:who.organization?.id??null,
     organizationName:who.organization?.name??null,website:who.organization?.website??null,
-    entitlement:await entitlement(who.organization?.id),aiConfigured:!!process.env.AI_INTEGRATIONS_OPENAI_BASE_URL});
+    entitlement:await entitlement(who.organization?.id),developerEligible:who.developerEligible,aiConfigured:!!process.env.AI_INTEGRATIONS_OPENAI_BASE_URL});
 }
 router.get("/me",async(req,res)=>{res.json(await account(await identity(req)));});
 router.put("/organization",async(req,res)=>{

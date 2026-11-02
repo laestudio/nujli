@@ -14,6 +14,7 @@ export * from './claim';
 export * from './claimLabel';
 export * from './createCheckout200';
 export * from './demonstration';
+export * from './developerAccessToggle';
 export * from './entitlement';
 export * from './evidenceComparison';
 export * from './generationJob';
