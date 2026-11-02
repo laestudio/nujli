@@ -1,0 +1,211 @@
+{
+  "organizations": [
+    {
+      "id": "954a6635-4abb-4a71-a4a7-b251ede7a345",
+      "owner_id": "nujli-system-public-data-demonstrations",
+      "name": "nujli. — independent public-data demonstrations",
+      "website": "https://iatiregistry.org/dataset/irw-activity",
+      "created_at": "2026-11-02T01:01:05.636Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "organization_id": "954a6635-4abb-4a71-a4a7-b251ede7a345",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "title": "Phase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)",
+      "overview": "Phase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)",
+      "cause": "Humanitarian assistance",
+      "location_name": "Palestine — Gaza entries; approximate regional marker, not a project site",
+      "latitude": 32,
+      "longitude": 35,
+      "status": "published",
+      "warnings": [
+        "This is a nujli. demonstration, not an organization-approved customer project. No Islamic Relief endorsement or approval is claimed.",
+        "All evidence is Organization Reported, not independently verified. Financial figures are not proof of delivered humanitarian outcomes.",
+        "No structured result indicators are present in this activity. No authorized media attached yet.",
+        "This activity covers Gaza and Lebanon. Only the four outgoing transactions explicitly naming Gaza recipients are displayed. Joint income, Lebanon entries and combined budgets are excluded; no percentage allocation or total is calculated.",
+        "The marker is a rounded Palestine regional cartographic reference (32°N, 35°E), not coordinates reported by IATI or an exact project location.",
+        "Budget statistics use value-date. Transaction statistics and the donation-date filter use transaction-date; value-date is separately preserved in the source excerpt. These dates can differ.",
+        "The source mixes financial-year/quarter wording in transaction references. Original references are retained without correcting or inferring accounting periods.",
+        "The source reports implementation status and a planned end date of 2026-10-31. Neither establishes that delivery was completed.",
+        "Evidence excerpts preserve the actual XML financial entries. Amounts are individual records, not summed totals; incoming funds, disbursements, expenditure, and budgets must not be added together.",
+        "This record does not establish that any donor's gift funded a transaction. The date filter compares reported dates, not individual donation allocation."
+      ],
+      "is_sample": false,
+      "source_text": "Phase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)\n\nPhase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)\n\n<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_hash": "64def1bbfab3fcb8238ff09f60c9974d9564f223093859b19288ac770a1f998f",
+      "approved_at": null,
+      "published_at": "2026-11-02T01:51:08.979Z",
+      "created_at": "2026-11-02T01:51:06.917Z",
+      "updated_at": "2026-11-02T02:05:03.994Z",
+      "extra_source_urls": [],
+      "source_evidence": {
+        "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml": "Phase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)\n\nPhase 2 of the Middle East Humanitarian Appeal (Emergency Response in Gaza and Lebanon)\n\n<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>\n\n<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+      },
+      "submission_permission_at": null,
+      "demonstration": {
+        "license": "Attribution-based license (Registry: other-at)",
+        "activityId": "GB-CHC-328158-MEHA24-2",
+        "disclosure": "Independent demonstration built from Islamic Relief's public reporting. Not reviewed or endorsed by Islamic Relief.",
+        "attribution": "Data: Islamic Relief Worldwide via IATI Registry",
+        "limitations": [
+          "Is Aid Reaching Gaza? — Islamic Relief Canada, 1 April 2024. Official publisher video embedded on its Gaza reporting page. Historical context only: not footage of, or evidence for, the 2025–2026 IATI transactions. No donation allocation is implied. Playback is supplied by YouTube; no download or rehosting permission is claimed.",
+          "No authorized project photographs or genuine panoramas are attached. This historical contextual video is not an immersive reconstruction."
+        ],
+        "registryUrl": "https://iatiregistry.org/dataset/irw-activity",
+        "sourceUpdatedAt": "2026-10-30T12:35:27+00:00"
+      },
+      "immersion": {
+        "scenes": [
+          {
+            "date": "2024-04-01",
+            "mediaId": "7087c135-0f9f-4b8d-a183-719d2dee18bc",
+            "hotspots": [
+              {
+                "x": 90,
+                "y": 10,
+                "id": "8f284a57-a1bc-440e-aabe-e74df51654c6",
+                "kind": "media",
+                "recordId": "7087c135-0f9f-4b8d-a183-719d2dee18bc",
+                "confirmed": true,
+                "limitations": "Is Aid Reaching Gaza? — Islamic Relief Canada, 1 April 2024. Official publisher video embedded on its Gaza reporting page. Historical context only: not footage of, or evidence for, the 2025–2026 IATI transactions. No donation allocation is implied. Playback is supplied by YouTube; no download or rehosting permission is claimed."
+              }
+            ],
+            "dateQuote": "Apr 1, 2024",
+            "panoramaConfirmed": false
+          }
+        ],
+        "comparisons": []
+      },
+      "evidence_publications": {
+        "media:bf8a9303ec2a4412920c1ae3d1331c347dad4c1f919e4ba9347849e0aba8c631": "2026-11-02T02:05:04.002Z"
+      }
+    }
+  ],
+  "evidence_claims": [
+    {
+      "id": "20998e5d-ea81-4781-8fdb-e8252fbdf60c",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "text": "<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "ffa590fa-4645-4f82-8084-4c810199f3b7",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "text": "<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "c706510a-7dd6-4611-96e1-0f728ebfac05",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "text": "<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "960096a3-0069-4e16-bd3c-de998bef2412",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "text": "<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    }
+  ],
+  "impact_statistics": [
+    {
+      "id": "6e47788a-5639-4d02-962a-549effb5303e",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "claim_id": "20998e5d-ea81-4781-8fdb-e8252fbdf60c",
+      "label": "Funds Transfer During FY 2025-26 Q3- Gaza",
+      "value": "30449",
+      "unit": "GBP",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "as_of": "2025-12-31T00:00:00.000Z"
+    },
+    {
+      "id": "71de853e-4669-4613-8ad6-e144913eb403",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "claim_id": "ffa590fa-4645-4f82-8084-4c810199f3b7",
+      "label": "Funds Transfer FY 2025-26 Q2",
+      "value": "69403.57",
+      "unit": "GBP",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "as_of": "2025-08-13T00:00:00.000Z"
+    },
+    {
+      "id": "93ad28e3-5773-46c8-bb6a-62f8afcb52ed",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "claim_id": "c706510a-7dd6-4611-96e1-0f728ebfac05",
+      "label": "Funds Transfer FY 2025-26 Q4- Gaza",
+      "value": "3386",
+      "unit": "GBP",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "as_of": "2026-04-22T00:00:00.000Z"
+    },
+    {
+      "id": "1ea3bdbe-f0d5-4073-9d03-b3d9e860888e",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "claim_id": "960096a3-0069-4e16-bd3c-de998bef2412",
+      "label": "Expenditure Incurred During FY 2026-2027 Q2 - Gaza",
+      "value": "99647",
+      "unit": "GBP",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "as_of": "2026-10-30T00:00:00.000Z"
+    }
+  ],
+  "project_updates": [
+    {
+      "id": "c55e3c8b-3d8d-440a-85e1-684e68f32be5",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "title": "Funds Transfer During FY 2025-26 Q3- Gaza",
+      "date": "2025-12-31T00:00:00.000Z",
+      "body": "<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer During FY 2025-26 Q3- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-12-31\"/>\n    <value currency=\"GBP\" value-date=\"2025-12-31\">30449</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Gaza</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "654d63c6-18c1-49f6-8937-2a3171e22da2",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "title": "Funds Transfer FY 2025-26 Q2",
+      "date": "2025-08-13T00:00:00.000Z",
+      "body": "<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q2\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2025-08-13\"/>\n    <value currency=\"GBP\" value-date=\"2025-09-09\">69403.57</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Gaza Culture and Development Group</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "d59d9b34-f14c-4f4a-9987-19e088e2fec0",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "title": "Funds Transfer FY 2025-26 Q4- Gaza",
+      "date": "2026-04-22T00:00:00.000Z",
+      "body": "<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Funds Transfer FY 2025-26 Q4- Gaza\">\n    <transaction-type code=\"3\"/>\n    <transaction-date iso-date=\"2026-04-22\"/>\n    <value currency=\"GBP\" value-date=\"2026-02-12\">3386</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    },
+    {
+      "id": "603341e1-7974-4eac-983e-c0eba6f23b6f",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "title": "Expenditure Incurred During FY 2026-2027 Q2 - Gaza",
+      "date": "2026-10-30T00:00:00.000Z",
+      "body": "<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>",
+      "source_url": "https://aidstream.s3.us-west-2.amazonaws.com/xml/irw-activities.xml",
+      "quote": "<transaction ref=\"Expenditure Incurred During FY 2026-2027 Q2 - Gaza\">\n    <transaction-type code=\"4\"/>\n    <transaction-date iso-date=\"2026-10-30\"/>\n    <value currency=\"GBP\" value-date=\"2026-09-30\">99647</value>\n    <provider-org ref=\"GB-CHC-328158\" provider-activity-id=\"GB-CHC-328158-MEHA24-2\" type=\"21\">\n      <narrative xml:lang=\"en\">Islamic Relief Worldwide</narrative>\n    </provider-org>\n    <receiver-org type=\"22\">\n      <narrative xml:lang=\"en\">Islamic Relief Palestine (Gaza)</narrative>\n    </receiver-org>\n    <flow-type code=\"10\"/>\n  </transaction>"
+    }
+  ],
+  "media": [
+    {
+      "id": "7087c135-0f9f-4b8d-a183-719d2dee18bc",
+      "project_id": "bf0edb72-d94c-4114-9318-698319dd8ad5",
+      "url": "https://www.youtube.com/watch?v=xn9G_nild-w",
+      "type": "video",
+      "caption": "Is Aid Reaching Gaza? — Islamic Relief Canada, 1 April 2024. Official publisher video embedded on its Gaza reporting page. Historical context only: not footage of, or evidence for, the 2025–2026 IATI transactions. No donation allocation is implied. Playback is supplied by YouTube; no download or rehosting permission is claimed.",
+      "permission_status": "approved",
+      "source_url": "https://www.islamicreliefcanada.org/giving/emergencies/palestine/gaza-update"
+    }
+  ]
+}
