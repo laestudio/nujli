@@ -1,0 +1,4 @@
+- [nujli. trust requirements](trust-requirements.md) — real evidence and verified payments only; strict acceptance reporting and simulated funding separation.
+- [Integration compatibility](integration-compatibility.md) — validate generated tooling and SDK APIs against installed versions; browser runner has Nix library constraints.
+- [Immersive evidence requirements](immersive-evidence.md) — media determines viewing mode; confirmed record-backed hotspots, no invented reconstruction or donation attribution.
+- [Public-data demonstrations](public-data-demonstrations.md) — real IATI evidence is not organization approval; separate financial records, attribution, dates, and media rights.

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "nujli."
+description = "Impact Revealed. Source-backed humanitarian project pages, secure organization publishing, independent evidence reviews and a free public donor map."
+version = "1.0.0"
+id = "artifacts/nujli"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22110
+
+[services.development]
+run = "pnpm --filter @workspace/nujli run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nujli", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nujli/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22110"
+BASE_PATH = "/"

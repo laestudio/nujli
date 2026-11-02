@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "oACafLNwXrAghtwbs2Ik6"
+uri = "file://artifacts/nujli/public/logo-light.svg"
+type = "image"
+title = "nujli. — light wordmark"
+description = "Ink-black monoline letters on cotton, with an outline-free flag period."
+logical_id = "c9627c84-21e1-4c86-a4d9-3b88be7254d6"
+content_hash = "sha256:96f21d3b9f5c2c7acecd8976860179e6eca026f4c837874833581a43dc0185ad"
+size = 944
+mtime_ms = 1793580933062
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:6b90ec8e-8380-4b24-9760-7a06b4055782/c9627c84-21e1-4c86-a4d9-3b88be7254d6/a17d774f-2211-4318-ad0c-e8b9bbf2edd3"
+storage_version_token = "1793580995394208"
+content_type = "image/svg+xml"
+
+[[outputs]]
+id = "Mh8vJBOlRwMx4Rfft3IMr"
+uri = "file://artifacts/nujli/public/mark-light.svg"
+type = "image"
+title = "nujli. — light icon"
+description = "Matching light-background n-and-flag icon."
+logical_id = "69e16ca5-9c3b-47f2-be50-0e33283051ef"
+content_hash = "sha256:b9bc6788e6a8adf9af9fe3de6773991aebd4ae82fe2e115302f72d3edbe8a402"
+size = 695
+mtime_ms = 1793580934819
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:6b90ec8e-8380-4b24-9760-7a06b4055782/69e16ca5-9c3b-47f2-be50-0e33283051ef/ec3dd332-4827-45bc-a265-fbc69329f209"
+storage_version_token = "1793580996086813"
+content_type = "image/svg+xml"

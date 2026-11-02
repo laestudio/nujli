@@ -11,6 +11,248 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /public/projects:
+    get:
+      operationId: listPublicProjects
+      parameters:
+        - {name: search, in: query, schema: {type: string}}
+        - {name: cause, in: query, schema: {type: string}}
+        - {name: organization, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: Published projects only
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: "#/components/schemas/Project"}}
+  /public/projects/{id}:
+    get:
+      operationId: getPublicProject
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Published project with evidence
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+  /public/summary:
+    get:
+      operationId: getPublicSummary
+      responses:
+        "200":
+          description: Real published counts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [projects, organizations, causes]
+                properties:
+                  projects: {type: integer}
+                  organizations: {type: integer}
+                  causes: {type: array, items: {type: string}}
+  /billing/package:
+    get:
+      operationId: getBillingPackage
+      responses:
+        "200":
+          description: Live Whop plan or explicit blocked state
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Package"}
+  /billing/checkout:
+    post:
+      operationId: createCheckout
+      responses:
+        "200":
+          description: Server-bound official checkout
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties: {url: {type: string}}
+  /billing/verify:
+    post:
+      operationId: verifyMembership
+      responses:
+        "200":
+          description: Server verified membership
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Entitlement"}
+  /me:
+    get:
+      operationId: getMe
+      responses:
+        "200":
+          description: Signed-in account and entitlement
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Account"}
+  /organization:
+    put:
+      operationId: saveOrganization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/OrganizationInput"}
+      responses:
+        "200":
+          description: Saved organization
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Account"}
+  /organization/projects:
+    get:
+      operationId: listOrganizationProjects
+      responses:
+        "200":
+          description: Owned projects
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: "#/components/schemas/Project"}}
+    post:
+      operationId: submitProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ProjectSubmission"}
+      responses:
+        "201":
+          description: Private project
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+  /organization/projects/{id}:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: string}}
+    get:
+      operationId: getOrganizationProject
+      responses:
+        "200":
+          description: Private owned project
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+    put:
+      operationId: saveProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ProjectRevision"}
+      responses:
+        "200":
+          description: Saved draft with approvals reset
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+    delete:
+      operationId: deleteProject
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/ActionResult"}
+  /organization/projects/{id}/generate:
+    post:
+      operationId: generateProject
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "202":
+          description: Persisted generation job
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/GenerationJob"}
+  /organization/projects/{id}/job:
+    get:
+      operationId: getGenerationJob
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Most recent job, or idle
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/GenerationJob"}
+  /organization/projects/{id}/approve:
+    post:
+      operationId: approveProject
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ApprovalInput"}
+      responses:
+        "200":
+          description: Approved draft
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+  /organization/projects/{id}/publish:
+    post:
+      operationId: publishProject
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Published project
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+  /organization/projects/{id}/unpublish:
+    post:
+      operationId: unpublishProject
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Private project
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Project"}
+  /reviewer/claims:
+    get:
+      operationId: listReviewerClaims
+      responses:
+        "200":
+          description: Published claims available to authorized reviewers
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: "#/components/schemas/ReviewClaim"}}
+  /reviewer/claims/{id}/reviews:
+    post:
+      operationId: submitIndependentReview
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ReviewInput"}
+      responses:
+        "201":
+          description: Saved independent review
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Review"}
+  /visual-build:
+    get:
+      operationId: getVisualBuild
+      parameters:
+        - {name: projectId, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: Conceptual funding stages separate from documented construction
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/VisualBuild"}
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +268,202 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    ActionResult:
+      type: object
+      required: [ok]
+      properties: {ok: {type: boolean}}
+    OrganizationInput:
+      type: object
+      required: [name, website]
+      properties:
+        name: {type: string, minLength: 2, maxLength: 160}
+        website: {type: string, maxLength: 2048}
+    ProjectSubmission:
+      type: object
+      required: [sourceUrl, permissionsConfirmed]
+      properties:
+        sourceUrl: {type: string, maxLength: 2048}
+        permissionsConfirmed: {type: boolean}
+        extraSourceUrls: {type: array, maxItems: 5, items: {type: string, maxLength: 2048}}
+    ApprovalInput:
+      type: object
+      required: [accuracyConfirmed, permissionsConfirmed, privacyConfirmed]
+      properties:
+        accuracyConfirmed: {type: boolean}
+        permissionsConfirmed: {type: boolean}
+        privacyConfirmed: {type: boolean}
+    Entitlement:
+      type: object
+      required: [active, status, message]
+      properties:
+        active: {type: boolean}
+        status: {type: string}
+        message: {type: string}
+        expiresAt: {type: [string, "null"]}
+    Account:
+      type: object
+      required: [userId, role, entitlement, aiConfigured]
+      properties:
+        userId: {type: string}
+        role: {type: string, enum: [organization, reviewer]}
+        organizationId: {type: [string, "null"]}
+        organizationName: {type: [string, "null"]}
+        website: {type: [string, "null"]}
+        entitlement: {$ref: "#/components/schemas/Entitlement"}
+        aiConfigured: {type: boolean}
+    Package:
+      type: object
+      required: [status, name, message, checkoutReady]
+      properties:
+        status: {type: string, enum: [ready, blocked]}
+        name: {type: string}
+        message: {type: string}
+        checkoutReady: {type: boolean}
+        price: {type: [number, "null"]}
+        currency: {type: [string, "null"]}
+        billingPeriodDays: {type: [integer, "null"]}
+        trialDays: {type: [integer, "null"]}
+        productUrl: {type: string}
+    Claim:
+      type: object
+      required: [id, text, sourceUrl, quote, label, reviews]
+      properties:
+        id: {type: string}
+        text: {type: string, maxLength: 2000}
+        sourceUrl: {type: string}
+        quote: {type: string, maxLength: 4000}
+        label: {type: string, enum: [Organization Reported, Corroborated, Independently Reviewed]}
+        reviews: {type: array, items: {$ref: "#/components/schemas/Review"}}
+    Statistic:
+      type: object
+      required: [id, label, value, unit, claimId, sourceUrl, quote, asOf]
+      properties:
+        id: {type: string}
+        label: {type: string}
+        value: {type: string}
+        unit: {type: string}
+        claimId: {type: string}
+        sourceUrl: {type: string}
+        quote: {type: string}
+        asOf: {type: [string, "null"]}
+    ProjectUpdate:
+      type: object
+      required: [id, title, date, body, sourceUrl, quote]
+      properties:
+        id: {type: string}
+        title: {type: string}
+        date: {type: string}
+        body: {type: string}
+        sourceUrl: {type: string}
+        quote: {type: string}
+    Media:
+      type: object
+      required: [id, url, type, caption, permissionStatus, sourceUrl]
+      properties:
+        id: {type: string}
+        url: {type: string}
+        type: {type: string, enum: [image, video]}
+        caption: {type: string}
+        permissionStatus: {type: string, enum: [pending, approved, rejected]}
+        sourceUrl: {type: string}
+    ReviewInput:
+      type: object
+      required: [findings, limitations, evidenceUrls, conflictOfInterestConfirmed]
+      properties:
+        findings: {type: string, minLength: 20, maxLength: 5000}
+        limitations: {type: string, minLength: 10, maxLength: 5000}
+        evidenceUrls: {type: array, minItems: 1, maxItems: 20, items: {type: string}}
+        conflictOfInterestConfirmed: {type: boolean}
+    Review:
+      type: object
+      required: [id, findings, limitations, evidenceUrls, createdAt]
+      properties:
+        id: {type: string}
+        findings: {type: string}
+        limitations: {type: string}
+        evidenceUrls: {type: array, items: {type: string}}
+        createdAt: {type: string}
+    ReviewClaim:
+      allOf:
+        - {$ref: "#/components/schemas/Claim"}
+        - type: object
+          required: [projectId, projectTitle, organizationName]
+          properties:
+            projectId: {type: string}
+            projectTitle: {type: string}
+            organizationName: {type: string}
+    ProjectRevision:
+      type: object
+      required: [title, overview, cause, locationName, latitude, longitude, statistics, updates, media, claims]
+      properties:
+        title: {type: string, maxLength: 200}
+        overview: {type: string, maxLength: 10000}
+        cause: {type: string, maxLength: 100}
+        locationName: {type: string, maxLength: 200}
+        latitude: {type: [number, "null"], minimum: -90, maximum: 90}
+        longitude: {type: [number, "null"], minimum: -180, maximum: 180}
+        statistics: {type: array, maxItems: 40, items: {$ref: "#/components/schemas/Statistic"}}
+        updates: {type: array, maxItems: 100, items: {$ref: "#/components/schemas/ProjectUpdate"}}
+        media: {type: array, maxItems: 50, items: {$ref: "#/components/schemas/Media"}}
+        claims: {type: array, maxItems: 100, items: {$ref: "#/components/schemas/Claim"}}
+    Project:
+      allOf:
+        - {$ref: "#/components/schemas/ProjectRevision"}
+        - type: object
+          required: [id, organizationId, organizationName, sourceUrl, status, warnings, isSample, createdAt, updatedAt]
+          properties:
+            id: {type: string}
+            organizationId: {type: string}
+            organizationName: {type: string}
+            sourceUrl: {type: string}
+            status: {type: string, enum: [draft, approved, published]}
+            warnings: {type: array, items: {type: string}}
+            isSample: {type: boolean}
+            demonstration:
+              anyOf:
+                - $ref: "#/components/schemas/Demonstration"
+                - type: "null"
+            approvedAt: {type: [string, "null"]}
+            publishedAt: {type: [string, "null"]}
+            createdAt: {type: string}
+            updatedAt: {type: string}
+    Demonstration:
+      type: object
+      required: [disclosure, attribution, registryUrl, activityId, license, sourceUpdatedAt]
+      properties:
+        disclosure: {type: string}
+        attribution: {type: string}
+        registryUrl: {type: string}
+        activityId: {type: string}
+        license: {type: string}
+        sourceUpdatedAt: {type: string}
+    GenerationJob:
+      type: object
+      required: [id, projectId, status, message]
+      properties:
+        id: {type: string}
+        projectId: {type: string}
+        status: {type: string, enum: [idle, queued, fetching, generating, building, preparing, completed, failed]}
+        message: {type: string}
+        createdAt: {type: string}
+    VisualBuild:
+      type: object
+      required: [id, title, conceptual, stages, documentedProgress, fundingPercent]
+      properties:
+        id: {type: string}
+        title: {type: string}
+        conceptual: {type: boolean}
+        fundingPercent: {type: [number, "null"]}
+        documentedProgress: {type: [string, "null"]}
+        sourceUrl: {type: [string, "null"]}
+        stages:
+          type: array
+          items:
+            type: object
+            required: [name, threshold]
+            properties:
+              name: {type: string}
+              threshold: {type: number}
     HealthStatus:
       type: object
       properties:

@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793577926034,
+      "tag": "0000_fast_argent",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793579307950,
+      "tag": "0001_public_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793581142193,
+      "tag": "0002_iati_demonstrations",
+      "breakpoints": true
+    }
+  ]
+}
